@@ -1,5 +1,5 @@
 # A path to the directory containing the images
-image_dir="base_images"
+image_dir="raw_images"
 
 # A path in which the transformed images will be stored
 tmp_image_dir="images"
