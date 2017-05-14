@@ -1,0 +1,13 @@
+#!/usr/bin/gnuplot
+reset
+set terminal pngcairo size 1280,720 enhanced
+
+set title sprintf("%s: Precision, Recall, F-measure", name)
+set xlabel 'Threshold'
+set ylabel 'Value'
+
+set yrange [0:1]
+
+plot filename using 1:2 with linespoints title 'Precision', \
+     filename using 1:3 with linespoints title 'Recall',    \
+     filename using 1:4 with linespoints title 'F-measure'

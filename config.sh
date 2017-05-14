@@ -1,5 +1,5 @@
 # A path to the directory containing the images
-image_dir="/home/mgaillard/Documents/INSA/Masterarbeit/images_for_features/base"
+image_dir="base_images"
 
 # A path in which the transformed images will be stored
 tmp_image_dir="images"

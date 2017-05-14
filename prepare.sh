@@ -9,7 +9,14 @@ mkdir results
 mkdir features_distances_release
 cd features_distances_release
 cmake -DCMAKE_BUILD_TYPE=Release ../features_distances
-make
+make -j 4
+cd ..
+
+# Compile the program to benchmark the features
+mkdir features_benchmark_release
+cd features_benchmark_release
+cmake -DCMAKE_BUILD_TYPE=Release ../features_benchmark
+make -j 4
 cd ..
 
 # Transform images
@@ -38,6 +45,5 @@ mogrify -path "$tmp_image_dir/crop10" -crop 90%x100%+0+0 "$tmp_image_dir/base/*"
 # Extract the features
 mkdir features
 for t in "base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10"; do
-    echo "$tmp_image_dir/$t"
     python3 features_extractor/main.py --output "features/features_$t.h5" --format h5 "$tmp_image_dir/$t"
 done
