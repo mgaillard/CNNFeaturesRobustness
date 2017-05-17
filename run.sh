@@ -12,7 +12,9 @@ cd ..
 # Run the program to benchmark the features
 cd features_benchmark_release
 for t in "base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10"; do
-    ./CNNFeaturesBenchmark --features_base ../features/features_base.h5 --features_modified "../features/features_$t.h5" > "../results/benchmark_$t.dat"
+    ./CNNFeaturesBenchmark single --features_base ../features/features_base.h5 --features_modified "../features/features_$t.h5" > "../results/benchmark_$t.dat"
     gnuplot -e "filename='../results/benchmark_$t.dat';name='CNN Features ($t)'" "../plot/threshold.pg" > "../results/benchmark_$t.png"
 done
+./CNNFeaturesBenchmark all --features_directory ../features > "../results/benchmark_all.dat"
+gnuplot -e "filename='../results/benchmark_all.dat';name='CNN Features (all)'" "../plot/threshold.pg" > "../results/benchmark_all.png"
 cd ..

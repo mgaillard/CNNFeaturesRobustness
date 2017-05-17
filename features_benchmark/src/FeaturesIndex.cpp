@@ -12,16 +12,24 @@ FeaturesIndex::FeaturesIndex(const vector<CnnFeatures> &features) :
 
 }
 
-void FeaturesIndex::Add(const CnnFeatures &feature) {
+unsigned long FeaturesIndex::size() const {
+    return features_.size();
+}
+
+void FeaturesIndex::add(const CnnFeatures &feature) {
     features_.push_back(feature);
 }
 
-void FeaturesIndex::Add(const vector<CnnFeatures> &features) {
+void FeaturesIndex::add(const vector<CnnFeatures> &features) {
     features_.insert(features_.end(), features.begin(), features.end());
 }
 
-vector<pair<float, unsigned long> > FeaturesIndex::SearchRadius(const CnnFeatures &query_features,
-                                                                const float threshold) const {
+const vector<CnnFeatures>& FeaturesIndex::features() const {
+    return features_;
+}
+
+vector<pair<float, unsigned long> > FeaturesIndex::search_radius(const CnnFeatures &query_features,
+                                                                 const float threshold) const {
     vector<pair<float, unsigned long> > results;
 
     #pragma omp parallel for shared(results)
@@ -41,8 +49,8 @@ vector<pair<float, unsigned long> > FeaturesIndex::SearchRadius(const CnnFeature
     return results;
 }
 
-vector<pair<float, unsigned long> > FeaturesIndex::SearchKNearest(const CnnFeatures &query_features,
-                                                                  const unsigned long k) const {
+vector<pair<float, unsigned long> > FeaturesIndex::search_knearest(const CnnFeatures &query_features,
+                                                                   const unsigned long k) const {
     priority_queue<pair<float, unsigned long> > k_nearest;
 
     for (unsigned long i = 0; i < features_.size(); i++) {

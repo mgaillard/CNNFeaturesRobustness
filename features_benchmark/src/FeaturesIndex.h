@@ -13,13 +13,17 @@ public:
 
     FeaturesIndex(const vector<CnnFeatures> &features);
 
-    void Add(const CnnFeatures &feature);
+    unsigned long size() const;
 
-    void Add(const vector<CnnFeatures> &features);
+    void add(const CnnFeatures &feature);
 
-    vector<pair<float, unsigned long> > SearchRadius(const CnnFeatures &query_features, const float threshold) const;
+    void add(const vector<CnnFeatures> &features);
 
-    vector<pair<float, unsigned long> > SearchKNearest(const CnnFeatures &query_features, const unsigned long k) const;
+    const vector<CnnFeatures>& features() const;
+
+    vector<pair<float, unsigned long> > search_radius(const CnnFeatures &query_features, const float threshold) const;
+
+    vector<pair<float, unsigned long> > search_knearest(const CnnFeatures &query_features, const unsigned long k) const;
 
 private:
     vector<CnnFeatures> features_;
