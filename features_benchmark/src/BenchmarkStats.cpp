@@ -17,7 +17,7 @@ void BenchmarkStats::process(const vector<pair<float, unsigned long> > &results,
 
     unsigned long relevant = relevants.size();
     unsigned long retrieved_relevant = relevant_items(results, relevants);
-    unsigned long retrieved = retrieved_items(results, threshold_);
+    unsigned long retrieved = retrieved_items(results);
 
     if (retrieved > 0) {
         precision = static_cast<double>(retrieved_relevant) / retrieved;
@@ -64,7 +64,8 @@ unsigned long BenchmarkStats::relevant_items(const vector<pair<float, unsigned l
     unsigned long nb_relevant = 0;
 
     for (auto &&result : results) {
-        if (binary_search(relevants.begin(), relevants.end(), result.second)) {
+        if (result.first <= threshold_
+        && binary_search(relevants.begin(), relevants.end(), result.second)) {
             nb_relevant++;
         }
     }
@@ -72,12 +73,11 @@ unsigned long BenchmarkStats::relevant_items(const vector<pair<float, unsigned l
     return nb_relevant;
 }
 
-unsigned long BenchmarkStats::retrieved_items(const vector<pair<float, unsigned long> > &results,
-                                              float threshold) {
+unsigned long BenchmarkStats::retrieved_items(const vector<pair<float, unsigned long> > &results) {
     unsigned long nb_retrieved = 0;
 
     for (auto &&result : results) {
-        if (result.first <= threshold) {
+        if (result.first <= threshold_) {
             nb_retrieved++;
         }
     }

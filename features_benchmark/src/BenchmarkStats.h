@@ -27,11 +27,10 @@ public:
     double mean_f1measure() const;
 
 private:
-    static unsigned long relevant_items(const vector<pair<float, unsigned long> > &results,
-                                        const vector<unsigned long> &relevants);
+    unsigned long relevant_items(const vector<pair<float, unsigned long> > &results,
+                                 const vector<unsigned long> &relevants);
 
-    static unsigned long retrieved_items(const vector<pair<float, unsigned long> > &results,
-                                         float threshold);
+    unsigned long retrieved_items(const vector<pair<float, unsigned long> > &results);
 
     float threshold_;
     double total_precision_;

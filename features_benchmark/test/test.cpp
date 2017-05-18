@@ -2,11 +2,16 @@
 
 #include "catch.hpp"
 
+#include <cmath>
+
 #include "../src/CnnFeatures.h"
 #include "../src/FeaturesIndex.h"
 #include "../src/Benchmark.h"
 #include "../src/BenchmarkStats.h"
 
+using namespace std;
+
+const double EPSILON = 0.0001;
 
 TEST_CASE("Features are indexed", "[features_index]") {
     vector<CnnFeatures> features = {
@@ -95,18 +100,85 @@ TEST_CASE("Statistics are computed", "[benchmark_stats]") {
         BenchmarkStats stats(5);
         stats.process(results, {1, 3, 5});
 
-        REQUIRE(stats.mean_precision() == 2.0/5);
-        REQUIRE(stats.mean_recall() == 2.0/3);
-        REQUIRE(stats.mean_f1measure() == 1.0/2);
+        REQUIRE(abs(stats.mean_precision() - 2.0/5) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 2.0/3) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 1.0/2) < EPSILON);
     }
 
     SECTION("No relevants elements") {
         BenchmarkStats stats(5);
         stats.process(results, {});
 
-        REQUIRE(stats.mean_precision() == 0.0);
-        REQUIRE(stats.mean_recall() == 1.0);
-        REQUIRE(stats.mean_f1measure() == 0.0);
+        REQUIRE(abs(stats.mean_precision() - 0.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 0.0) < EPSILON);
+    }
+}
+
+TEST_CASE("Statistics for different threshold are computed", "[benchmark_stats]") {
+    vector<pair<float, unsigned long> > results = {
+            make_pair(1, 1),
+            make_pair(2, 2),
+            make_pair(3, 3),
+            make_pair(4, 4),
+            make_pair(5, 5),
+            make_pair(6, 6),
+    };
+
+    vector<unsigned long> relevants = {1, 2, 3};
+
+    SECTION("Threshold 1") {
+        BenchmarkStats stats(1);
+        stats.process(results, relevants);
+
+        REQUIRE(abs(stats.mean_precision() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 1.0/3.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 1.0/2) < EPSILON);
+    }
+
+    SECTION("Threshold 2") {
+        BenchmarkStats stats(2);
+        stats.process(results, relevants);
+
+        REQUIRE(abs(stats.mean_precision() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 2.0/3.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 4.0/5.0) < EPSILON);
+    }
+
+    SECTION("Threshold 3") {
+        BenchmarkStats stats(3);
+        stats.process(results, relevants);
+
+        REQUIRE(abs(stats.mean_precision() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 1.0) < EPSILON);
+    }
+
+    SECTION("Threshold 4") {
+        BenchmarkStats stats(4);
+        stats.process(results, relevants);
+
+        REQUIRE(abs(stats.mean_precision() - 3.0/4.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 6.0/7.0) < EPSILON);
+    }
+
+    SECTION("Threshold 5") {
+        BenchmarkStats stats(5);
+        stats.process(results, relevants);
+
+        REQUIRE(abs(stats.mean_precision() - 3.0/5.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 3.0/4.0) < EPSILON);
+    }
+
+    SECTION("Threshold 6") {
+        BenchmarkStats stats(6);
+        stats.process(results, relevants);
+
+        REQUIRE(abs(stats.mean_precision() - 1.0/2.0) < EPSILON);
+        REQUIRE(abs(stats.mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats.mean_f1measure() - 2.0/3.0) < EPSILON);
     }
 }
 
@@ -130,13 +202,13 @@ TEST_CASE("Benchmark with single modification are executed", "[benchmark_single]
     SECTION("Threshold: 1 and 2") {
         vector<BenchmarkStats> stats = Benchmark::single_modification(index, features_modified, {1.0, 2.0});
 
-        REQUIRE(stats[0].mean_precision() == 1.0);
-        REQUIRE(stats[0].mean_recall() == 1.0);
-        REQUIRE(stats[0].mean_f1measure() == 1.0);
+        REQUIRE(abs(stats[0].mean_precision() - 1.0) < EPSILON);
+        REQUIRE(abs(stats[0].mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats[0].mean_f1measure() - 1.0) < EPSILON);
 
-        REQUIRE(stats[1].mean_precision() == 0.5);
-        REQUIRE(stats[1].mean_recall() == 1.0);
-        REQUIRE(stats[1].mean_f1measure() == 2.0/3);
+        REQUIRE(abs(stats[1].mean_precision() - 0.5) < EPSILON);
+        REQUIRE(abs(stats[1].mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats[1].mean_f1measure() - 2.0/3) < EPSILON);
     }
 }
 
@@ -170,8 +242,8 @@ TEST_CASE("Benchmark with all modifications are executed", "[benchmark_all]") {
     SECTION("Threshold: 4") {
         vector<BenchmarkStats> stats = Benchmark::all_modifications(index, 3, {4.0});
 
-        REQUIRE(stats[0].mean_precision() == 1.0);
-        REQUIRE(stats[0].mean_recall() == 1.0);
-        REQUIRE(stats[0].mean_f1measure() == 1.0);
+        REQUIRE(abs(stats[0].mean_precision() - 1.0) < EPSILON);
+        REQUIRE(abs(stats[0].mean_recall() - 1.0) < EPSILON);
+        REQUIRE(abs(stats[0].mean_f1measure() - 1.0) < EPSILON);
     }
 }
