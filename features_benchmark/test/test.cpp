@@ -247,3 +247,14 @@ TEST_CASE("Benchmark with all modifications are executed", "[benchmark_all]") {
         REQUIRE(abs(stats[0].mean_f1measure() - 1.0) < EPSILON);
     }
 }
+
+TEST_CASE("Threshold generation", "[generate_threshold]") {
+    vector<float> thresholds = Benchmark::generate_thresholds(10.0, 40.0, 10.0);
+
+    REQUIRE(thresholds.size() == 4);
+
+    REQUIRE(abs(thresholds[0] - 10.0) < EPSILON);
+    REQUIRE(abs(thresholds[1] - 20.0) < EPSILON);
+    REQUIRE(abs(thresholds[2] - 30.0) < EPSILON);
+    REQUIRE(abs(thresholds[3] - 40.0) < EPSILON);
+}

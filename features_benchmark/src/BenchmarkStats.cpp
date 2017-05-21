@@ -63,7 +63,7 @@ unsigned long BenchmarkStats::relevant_items(const vector<pair<float, unsigned l
                                              const vector<unsigned long> &relevants) {
     unsigned long nb_relevant = 0;
 
-    for (auto &&result : results) {
+    for (const pair<float, unsigned long> &result : results) {
         if (result.first <= threshold_
         && binary_search(relevants.begin(), relevants.end(), result.second)) {
             nb_relevant++;
@@ -76,7 +76,7 @@ unsigned long BenchmarkStats::relevant_items(const vector<pair<float, unsigned l
 unsigned long BenchmarkStats::retrieved_items(const vector<pair<float, unsigned long> > &results) {
     unsigned long nb_retrieved = 0;
 
-    for (auto &&result : results) {
+    for (const pair<float, unsigned long> &result : results) {
         if (result.first <= threshold_) {
             nb_retrieved++;
         }

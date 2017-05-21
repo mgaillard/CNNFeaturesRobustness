@@ -19,7 +19,7 @@ public:
                                                     unsigned long nb_relevants,
                                                     const vector<float> &thresholds);
 
-    static vector<float> generate_thresholds(float start, float step, int nb_steps);
+    static vector<float> generate_thresholds(float start, float end, float step);
 
     static void display_stats(const vector<BenchmarkStats> &stats);
 };

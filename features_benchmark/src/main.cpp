@@ -18,22 +18,36 @@ namespace po = boost::program_options;
 
 vector<string> ListFeatureFiles(const string &dir_path);
 
-void BenchmarkSingleModification(const string &features_base_path, const string &features_modified_path);
+void BenchmarkSingleModification(const string &features_base_path,
+                                 const string &features_modified_path,
+                                 float threshold_start,
+                                 float threshold_end,
+                                 float threshold_step);
 
-void BenchmarkAllModifications(const string &features_directory_path);
+void BenchmarkAllModifications(const string &features_directory_path,
+                               float threshold_start,
+                               float threshold_end,
+                               float threshold_step);
 
 int main(int argc, const char *argv[]) {
     try {
-        string type;
+        string benchmark_type;
+        float threshold_start;
+        float threshold_end;
+        float threshold_step;
+
         // Declare the supported command line options.
         po::options_description options_desc("./CNNFeaturesBenchmark [options]\nAllowed options:");
         options_desc.add_options()
                 ("help,h", "Display a help message")
-                ("benchmark_type,t", po::value<string>()->required(),
+                ("benchmark_type", po::value<string>(&benchmark_type)->required(),
                  "Set the type of benchmark to execute: 'single' or 'all'")
                 ("features_directory,d", po::value<string>(), "Path to directory of features")
                 ("features_base,b", po::value<string>(), "Path to base features")
-                ("features_modified,m", po::value<string>(), "Path to modified features");
+                ("features_modified,m", po::value<string>(), "Path to modified features")
+                ("threshold_start", po::value<float>(&threshold_start)->default_value(100.0), "Starting threshold")
+                ("threshold_end", po::value<float>(&threshold_end)->default_value(10000.0), "Ending threshold")
+                ("threshold_step", po::value<float>(&threshold_step)->default_value(100.0), "Threshold step");
 
         po::positional_options_description pos_options_desc;
         pos_options_desc.add("benchmark_type", 1);
@@ -52,14 +66,16 @@ int main(int argc, const char *argv[]) {
         po::notify(vm);
 
         if (vm.count("benchmark_type")) {
-            const string &benchmark_type = vm["benchmark_type"].as<string>();
-
             if (benchmark_type.compare("single") == 0) {
                 if (vm.count("features_base") && vm.count("features_modified")) {
                     string features_base_path = vm["features_base"].as<string>();
                     string features_modified_path = vm["features_modified"].as<string>();
 
-                    BenchmarkSingleModification(features_base_path, features_modified_path);
+                    BenchmarkSingleModification(features_base_path,
+                                                features_modified_path,
+                                                threshold_start,
+                                                threshold_end,
+                                                threshold_step);
                 } else {
                     cerr
                             << "Error: the --features_base and --features_modified options are required for the benchmark 'single'."
@@ -70,7 +86,10 @@ int main(int argc, const char *argv[]) {
                 if (vm.count("features_directory")) {
                     string features_directory_path = vm["features_directory"].as<string>();
 
-                    BenchmarkAllModifications(features_directory_path);
+                    BenchmarkAllModifications(features_directory_path,
+                                              threshold_start,
+                                              threshold_end,
+                                              threshold_step);
                 } else {
                     cerr
                             << "Error: the --features_base option is required for the benchmark 'all'."
@@ -120,20 +139,27 @@ vector<string> ListFeatureFiles(const string &dir_path) {
     return files;
 }
 
-void BenchmarkSingleModification(const string &features_base_path, const string &features_modified_path) {
+void BenchmarkSingleModification(const string &features_base_path,
+                                 const string &features_modified_path,
+                                 float threshold_start,
+                                 float threshold_end,
+                                 float threshold_step) {
     vector<CnnFeatures> features_base = FeaturesHdf5IO::load(features_base_path);
     vector<CnnFeatures> features_modified = FeaturesHdf5IO::load(features_modified_path);
 
     FeaturesIndex index(features_base);
 
-    vector<float> thresholds = Benchmark::generate_thresholds(100, 100, 100);
+    vector<float> thresholds = Benchmark::generate_thresholds(threshold_start, threshold_end, threshold_step);
 
     vector<BenchmarkStats> stats = Benchmark::single_modification(index, features_modified, thresholds);
 
     Benchmark::display_stats(stats);
 }
 
-void BenchmarkAllModifications(const string &features_directory_path) {
+void BenchmarkAllModifications(const string &features_directory_path,
+                               float threshold_start,
+                               float threshold_end,
+                               float threshold_step) {
     vector<string> feature_files = ListFeatureFiles(features_directory_path);
     unsigned long nb_relevant = feature_files.size();
 
@@ -144,7 +170,7 @@ void BenchmarkAllModifications(const string &features_directory_path) {
         index.add(features);
     }
 
-    vector<float> thresholds = Benchmark::generate_thresholds(100, 100, 100);
+    vector<float> thresholds = Benchmark::generate_thresholds(threshold_start, threshold_end, threshold_step);
 
     vector<BenchmarkStats> stats = Benchmark::all_modifications(index, nb_relevant, thresholds);
 

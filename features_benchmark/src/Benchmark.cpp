@@ -78,11 +78,11 @@ vector<BenchmarkStats> Benchmark::all_modifications(const FeaturesIndex &index,
     return stats;
 }
 
-vector<float> Benchmark::generate_thresholds(float start, float step, int nb_steps) {
+vector<float> Benchmark::generate_thresholds(float start, float end, float step) {
     vector<float> thresholds;
 
-    for (int i = 0; i < nb_steps; i++) {
-        thresholds.push_back(start + step * i);
+    for (float t = start; t <= end; t += step) {
+        thresholds.push_back(t);
     }
 
     return thresholds;

@@ -71,6 +71,18 @@ transformation_command["crop12"]="mogrify -path $tmp_image_dir/crop12 -crop 88%x
 transformation_command["crop16"]="mogrify -path $tmp_image_dir/crop16 -crop 84%x100%+0+0 $tmp_image_dir/base/*"
 transformation_command["crop20"]="mogrify -path $tmp_image_dir/crop20 -crop 80%x100%+0+0 $tmp_image_dir/base/*"
 
+declare -A cnn_model_threshold_start
+cnn_model_threshold_start["VGG16_block5_pool_avg"]=100
+cnn_model_threshold_start["VGG16_block5_pool_max"]=5000
+
+declare -A cnn_model_threshold_end
+cnn_model_threshold_end["VGG16_block5_pool_avg"]=10000
+cnn_model_threshold_end["VGG16_block5_pool_max"]=500000
+
+declare -A cnn_model_threshold_step
+cnn_model_threshold_step["VGG16_block5_pool_avg"]=100
+cnn_model_threshold_step["VGG16_block5_pool_max"]=5000
+
 function trace {
     echo $1 ; date +"%m/%d/%Y %H:%M:%S" ; echo ""
 }
