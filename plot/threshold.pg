@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot
 reset
-set terminal pngcairo size 1280,720 enhanced
+set terminal pngcairo size 1280,720 noenhanced
 
 set title sprintf("%s: Precision, Recall, F-measure", name)
 set xlabel 'Threshold'

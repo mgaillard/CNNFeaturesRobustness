@@ -1,26 +1,29 @@
-set terminal png nocrop enhanced size 1024,768 
-set output 'distributions.png'
+#!/usr/bin/gnuplot
+reset
+set terminal png nocrop enhanced size 1024,768
+
 set boxwidth 0.2 absolute
 set title "Distribution of distances" 
 set xrange [0:8] noreverse nowriteback
 set yrange [0: ] noreverse nowriteback
-plot 'distributions.dat' using 2:4:3:7:6 every ::0::0 with candlesticks lt 1 lw 2 title 'Blur' whiskerbars,        \
-     ''                  using 2:5:5:5:5 every ::0::0 with candlesticks lt -1 lw 2 notitle,                        \
-                                                                                                                   \
-     'distributions.dat' using 2:4:3:7:6 every ::1::1 with candlesticks lt 2 lw 2 title 'Gray' whiskerbars,        \
-     ''                  using 2:5:5:5:5 every ::1::1 with candlesticks lt -1 lw 2 notitle,                        \
-                                                                                                                   \
-     'distributions.dat' using 2:4:3:7:6 every ::2::2 with candlesticks lt 3 lw 2 title 'Resize50' whiskerbars,    \
-     ''                  using 2:5:5:5:5 every ::2::2 with candlesticks lt -1 lw 2 notitle,                        \
-                                                                                                                   \
-     'distributions.dat' using 2:4:3:7:6 every ::3::3 with candlesticks lt 4 lw 2 title 'Compress10' whiskerbars,  \
-     ''                  using 2:5:5:5:5 every ::3::3 with candlesticks lt -1 lw 2 notitle,                        \
-                                                                                                                   \
-     'distributions.dat' using 2:4:3:7:6 every ::4::4 with candlesticks lt 5 lw 2 title 'Rotate5' whiskerbars, \
-     ''                  using 2:5:5:5:5 every ::4::4 with candlesticks lt -1 lw 2 notitle,                        \
-                                                                                                                   \
-     'distributions.dat' using 2:4:3:7:6 every ::5::5 with candlesticks lt 6 lw 2 title 'Crop10' whiskerbars, \
-     ''                  using 2:5:5:5:5 every ::5::5 with candlesticks lt -1 lw 2 notitle,                        \
-                                                                                                                   \
-     'distributions.dat' using 2:4:3:7:6 every ::6::6 with candlesticks lt 7 lw 2 title 'Non-similar' whiskerbars, \
-     ''                  using 2:5:5:5:5 every ::6::6 with candlesticks lt -1 lw 2 notitle
+
+plot filename using 2:4:3:7:6 every ::0::0 with candlesticks lt 1 lw 2 title 'Blur' whiskerbars,        \
+     ''       using 2:5:5:5:5 every ::0::0 with candlesticks lt -1 lw 2 notitle,                        \
+                                                                                                        \
+     filename using 2:4:3:7:6 every ::1::1 with candlesticks lt 2 lw 2 title 'Gray' whiskerbars,        \
+     ''       using 2:5:5:5:5 every ::1::1 with candlesticks lt -1 lw 2 notitle,                        \
+                                                                                                        \
+     filename using 2:4:3:7:6 every ::2::2 with candlesticks lt 3 lw 2 title 'Resize50' whiskerbars,    \
+     ''       using 2:5:5:5:5 every ::2::2 with candlesticks lt -1 lw 2 notitle,                        \
+                                                                                                        \
+     filename using 2:4:3:7:6 every ::3::3 with candlesticks lt 4 lw 2 title 'Compress10' whiskerbars,  \
+     ''       using 2:5:5:5:5 every ::3::3 with candlesticks lt -1 lw 2 notitle,                        \
+                                                                                                        \
+     filename using 2:4:3:7:6 every ::4::4 with candlesticks lt 5 lw 2 title 'Rotate5' whiskerbars,     \
+     ''       using 2:5:5:5:5 every ::4::4 with candlesticks lt -1 lw 2 notitle,                        \
+                                                                                                        \
+     filename using 2:4:3:7:6 every ::5::5 with candlesticks lt 6 lw 2 title 'Crop10' whiskerbars,      \
+     ''       using 2:5:5:5:5 every ::5::5 with candlesticks lt -1 lw 2 notitle,                        \
+                                                                                                        \
+     filename using 2:4:3:7:6 every ::6::6 with candlesticks lt 7 lw 2 title 'Non-similar' whiskerbars, \
+     ''       using 2:5:5:5:5 every ::6::6 with candlesticks lt -1 lw 2 notitle

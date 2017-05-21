@@ -1,20 +1,28 @@
 #!/bin/bash
 
+source config.sh
+
 # Run the program to compute the distance distributions
 cd features_distances_release
-./CNNFeaturesDistances > ../results/distributions.dat
+for model in ${cnn_model[@]}; do
+    ./CNNFeaturesDistances "../features/$model" > "../results/distributions_$model.dat"
+done
 cd ..
 # Plot results
 cd results
-gnuplot < ../plot/distributions.pg
+for model in ${cnn_model[@]}; do
+    gnuplot -e "filename='distributions_$model.dat'" "../plot/distributions.pg" > "distributions_$model.png"
+done
 cd ..
 
 # Run the program to benchmark the features
 cd features_benchmark_release
-for t in "base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10"; do
-    ./CNNFeaturesBenchmark single --features_base ../features/features_base.h5 --features_modified "../features/features_$t.h5" > "../results/benchmark_$t.dat"
-    gnuplot -e "filename='../results/benchmark_$t.dat';name='CNN Features ($t)'" "../plot/threshold.pg" > "../results/benchmark_$t.png"
+for model in ${cnn_model[@]}; do
+    for t in ${transformations[@]}; do
+        ./CNNFeaturesBenchmark single --features_base "../features/$model/features_base.h5" --features_modified "../features/$model/features_$t.h5" > "../results/benchmark_${model}_${t}.dat"
+        gnuplot -e "filename='../results/benchmark_${model}_${t}.dat';name='$model Features ($t)'" "../plot/threshold.pg" > "../results/benchmark_${model}_${t}.png"
+    done
+    ./CNNFeaturesBenchmark all --features_directory "../features/$model" > "../results/benchmark_${model}_all.dat"
+    gnuplot -e "filename='../results/benchmark_${model}_all.dat';name='$model Features (all)'" "../plot/threshold.pg" > "../results/benchmark_${model}_all.png"
 done
-./CNNFeaturesBenchmark all --features_directory ../features > "../results/benchmark_all.dat"
-gnuplot -e "filename='../results/benchmark_all.dat';name='CNN Features (all)'" "../plot/threshold.pg" > "../results/benchmark_all.png"
 cd ..

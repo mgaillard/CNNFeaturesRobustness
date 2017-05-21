@@ -75,14 +75,21 @@ void compute_stats_nonsimilar(const Features &features) {
          << extract_result<tag::max>(acc_nonsimilar) << endl;
 }
 
-int main() {
-    Features features_base = FeaturesHdf5IO::load("../features/features_base.h5");
-    Features features_blur = FeaturesHdf5IO::load("../features/features_blur.h5");
-    Features features_gray = FeaturesHdf5IO::load("../features/features_gray.h5");
-    Features features_resize50 = FeaturesHdf5IO::load("../features/features_resize50.h5");
-    Features features_compress10 = FeaturesHdf5IO::load("../features/features_compress10.h5");
-    Features features_rotate5 = FeaturesHdf5IO::load("../features/features_rotate5.h5");
-    Features features_crop10 = FeaturesHdf5IO::load("../features/features_crop10.h5");
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        cout << "The program takes one argument: the path to the directory of features" << endl;
+        return 1;
+    }
+    
+    string directory = argv[1];
+
+    Features features_base = FeaturesHdf5IO::load(directory + "/features_base.h5");
+    Features features_blur = FeaturesHdf5IO::load(directory + "/features_blur.h5");
+    Features features_gray = FeaturesHdf5IO::load(directory + "/features_gray.h5");
+    Features features_resize50 = FeaturesHdf5IO::load(directory + "/features_resize50.h5");
+    Features features_compress10 = FeaturesHdf5IO::load(directory + "/features_compress10.h5");
+    Features features_rotate5 = FeaturesHdf5IO::load(directory + "/features_rotate5.h5");
+    Features features_crop10 = FeaturesHdf5IO::load(directory + "/features_crop10.h5");
 
     cout << "#transformation\tid\tmin\tfirst quartile\tmediane\tlast quartile\tmax" << endl;
     cout << "blur\t1\t";

@@ -34,10 +34,14 @@ class FeatureExtractor:
     Extract image features
     """
 
-    def __init__(self):
+    def __init__(self, model_type):
         # Model to extract features
-        self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='avg')
-
+        if model_type == 'VGG16_block5_pool_avg':
+            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='avg')
+        elif model_type == 'VGG16_block5_pool_max':
+            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='max')
+        else:
+            raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
 
     @staticmethod
     def list_images_directory(dir_path):

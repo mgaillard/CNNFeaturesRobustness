@@ -22,7 +22,14 @@ def main():
                         help='In which file to save the features',
                         default='dataset')
 
+    parser.add_argument('--model',
+                        type=str,
+                        choices=['VGG16_block5_pool_avg', 'VGG16_block5_pool_max'],
+                        help='Which model to use to extract features',
+                        default='VGG16_block5_pool_avg')
+
     parser.add_argument('--format',
+                        type=str,
                         choices=['npz', 'h5'],
                         help='In which format to save the features',
                         default='npz')
@@ -33,7 +40,7 @@ def main():
         print('The provided directory doesn\'t exist.')
         sys.exit()
 
-    extractor = FeatureExtractor()
+    extractor = FeatureExtractor(args.model)
     features = extractor.extract(args.directory)
 
     if args.format == 'npz':
