@@ -1,5 +1,5 @@
-#ifndef CNNFEATURESBENCHMARK_CNNFEATURES_H
-#define CNNFEATURESBENCHMARK_CNNFEATURES_H
+#ifndef CNNFEATURESDISTANCES_CNNFEATURES_H
+#define CNNFEATURESDISTANCES_CNNFEATURES_H
 
 #include <vector>
 #include <string>
@@ -25,4 +25,4 @@ float CnnFeaturesEuclideanDistance(const CnnFeatures &features_a, const CnnFeatu
 
 float CnnFeaturesCosineDistance(const CnnFeatures &features_a, const CnnFeatures &features_b);
 
-#endif //CNNFEATURESBENCHMARK_CNNFEATURES_H
+#endif //CNNFEATURESDISTANCES_CNNFEATURES_H

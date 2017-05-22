@@ -87,7 +87,7 @@ TEST_CASE("Features are indexed", "[features_index]") {
     }
 }
 
-TEST_CASE("Statistics are computed", "[benchmark_stats]") {
+TEST_CASE("Statistics are computed", "[statistics]") {
     vector<pair<float, unsigned long> > results = {
             make_pair(1, 3),
             make_pair(2, 1),
@@ -115,7 +115,7 @@ TEST_CASE("Statistics are computed", "[benchmark_stats]") {
     }
 }
 
-TEST_CASE("Statistics for different threshold are computed", "[benchmark_stats]") {
+TEST_CASE("Statistics for different threshold are computed", "[statistics]") {
     vector<pair<float, unsigned long> > results = {
             make_pair(1, 1),
             make_pair(2, 2),
@@ -182,7 +182,7 @@ TEST_CASE("Statistics for different threshold are computed", "[benchmark_stats]"
     }
 }
 
-TEST_CASE("Benchmark with single modification are executed", "[benchmark_single]") {
+TEST_CASE("Benchmark with single modification are executed", "[benchmark]") {
     vector<CnnFeatures> features_base = {
             {0, 1},
             {0, 2},
@@ -212,7 +212,7 @@ TEST_CASE("Benchmark with single modification are executed", "[benchmark_single]
     }
 }
 
-TEST_CASE("Benchmark with all modifications are executed", "[benchmark_all]") {
+TEST_CASE("Benchmark with all modifications are executed", "[benchmark]") {
     vector<CnnFeatures> features_a = {
             {0, 0},
             {0, 4},
@@ -257,4 +257,27 @@ TEST_CASE("Threshold generation", "[generate_threshold]") {
     REQUIRE(abs(thresholds[1] - 20.0) < EPSILON);
     REQUIRE(abs(thresholds[2] - 30.0) < EPSILON);
     REQUIRE(abs(thresholds[3] - 40.0) < EPSILON);
+}
+
+TEST_CASE("Distances", "[distance]") {
+    CnnFeatures features_a = {1.0, 5.0, 3.0, -1.2};
+    CnnFeatures features_b = {6.0, 4.0, 2.0, -2.5};
+
+    SECTION("Euclidean") {
+        float dist = CnnFeaturesEuclideanDistance(features_a, features_b);
+
+        REQUIRE(abs(dist - 5.356304) < EPSILON);
+    }
+
+    SECTION("Euclidean Square") {
+        float dist = CnnFeaturesEuclideanDistanceSq(features_a, features_b);
+
+        REQUIRE(abs(dist - 28.69) < EPSILON);
+    }
+
+    SECTION("Cosine") {
+        float dist = CnnFeaturesCosineDistance(features_a, features_b);
+
+        REQUIRE(abs(dist - 0.2651323) < EPSILON);
+    }
 }

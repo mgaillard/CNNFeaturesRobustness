@@ -49,9 +49,9 @@ int main(int argc, const char *argv[]) {
                 ("features_base,b", po::value<string>(), "Path to base features")
                 ("features_modified,m", po::value<string>(), "Path to modified features")
                 ("distance,d", po::value<string>(&distance_type)->default_value(CNN_DIST_EUCLIDEAN_SQUARE), "Type of distance between features")
-                ("threshold_start", po::value<float>(&threshold_start)->default_value(100.0), "Starting threshold")
-                ("threshold_end", po::value<float>(&threshold_end)->default_value(10000.0), "Ending threshold")
-                ("threshold_step", po::value<float>(&threshold_step)->default_value(100.0), "Threshold step");
+                ("threshold_start", po::value<float>(&threshold_start)->default_value(0.0), "Starting threshold")
+                ("threshold_end", po::value<float>(&threshold_end)->default_value(5000.0), "Ending threshold")
+                ("threshold_step", po::value<float>(&threshold_step)->default_value(50.0), "Threshold step");
 
         po::positional_options_description pos_options_desc;
         pos_options_desc.add("benchmark_type", 1);

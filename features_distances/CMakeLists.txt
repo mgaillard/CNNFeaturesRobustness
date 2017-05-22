@@ -10,11 +10,15 @@ if(HDF5_FOUND)
     set(HDF5_LIBS hdf5 hdf5_cpp)
 endif()
 
-find_package(Boost REQUIRED)
+set(Boost_USE_STATIC_LIBS        ON) # only find static libs
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+find_package(Boost COMPONENTS program_options REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-set(SOURCE_FILES main.cpp Features.cpp Features.h FeaturesHdf5IO.cpp FeaturesHdf5IO.h)
+set(SOURCE_FILES main.cpp FeaturesHdf5IO.cpp FeaturesHdf5IO.h CnnFeatures.cpp CnnFeatures.h)
 add_executable(CNNFeaturesDistances ${SOURCE_FILES})
 target_link_libraries(CNNFeaturesDistances ${HDF5_LIBS})
+target_link_libraries(CNNFeaturesDistances ${Boost_LIBRARIES})

@@ -5,7 +5,7 @@ source config.sh
 # Run the program to compute the distance distributions
 cd features_distances_release
 for model in ${cnn_model[@]}; do
-    ./CNNFeaturesDistances "../features/$model" > "../results/distributions_$model.dat"
+    ./CNNFeaturesDistances --features_directory "../features/$model" --distance $cnn_features_distance > "../results/distributions_$model.dat"
 done
 cd ..
 # Plot results

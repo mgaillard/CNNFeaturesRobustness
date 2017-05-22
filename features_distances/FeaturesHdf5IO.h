@@ -1,15 +1,16 @@
-#ifndef FEATURES_ROBUSTNESS_FEATURESHDF5IO_H
-#define FEATURES_ROBUSTNESS_FEATURESHDF5IO_H
+#ifndef CNNFEATURESDISTANCES_FEATURESHDF5IO_H
+#define CNNFEATURESDISTANCES_FEATURESHDF5IO_H
 
 #include <string>
-#include "Features.h"
+#include <vector>
+#include "CnnFeatures.h"
 
 using namespace std;
 
 class FeaturesHdf5IO {
 public:
-    static Features load(const string &filename);
+    static vector<CnnFeatures> load(const string &filename);
 };
 
 
-#endif //FEATURES_ROBUSTNESS_FEATURESHDF5IO_H
+#endif //CNNFEATURESDISTANCES_FEATURESHDF5IO_H
