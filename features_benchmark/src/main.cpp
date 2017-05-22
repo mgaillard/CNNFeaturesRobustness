@@ -20,11 +20,13 @@ vector<string> ListFeatureFiles(const string &dir_path);
 
 void BenchmarkSingleModification(const string &features_base_path,
                                  const string &features_modified_path,
+                                 const string &distance_type,
                                  float threshold_start,
                                  float threshold_end,
                                  float threshold_step);
 
 void BenchmarkAllModifications(const string &features_directory_path,
+                               const string &distance_type,
                                float threshold_start,
                                float threshold_end,
                                float threshold_step);
@@ -32,6 +34,7 @@ void BenchmarkAllModifications(const string &features_directory_path,
 int main(int argc, const char *argv[]) {
     try {
         string benchmark_type;
+        string distance_type;
         float threshold_start;
         float threshold_end;
         float threshold_step;
@@ -45,6 +48,7 @@ int main(int argc, const char *argv[]) {
                 ("features_directory,d", po::value<string>(), "Path to directory of features")
                 ("features_base,b", po::value<string>(), "Path to base features")
                 ("features_modified,m", po::value<string>(), "Path to modified features")
+                ("distance,d", po::value<string>(&distance_type)->default_value(CNN_DIST_EUCLIDEAN_SQUARE), "Type of distance between features")
                 ("threshold_start", po::value<float>(&threshold_start)->default_value(100.0), "Starting threshold")
                 ("threshold_end", po::value<float>(&threshold_end)->default_value(10000.0), "Ending threshold")
                 ("threshold_step", po::value<float>(&threshold_step)->default_value(100.0), "Threshold step");
@@ -73,6 +77,7 @@ int main(int argc, const char *argv[]) {
 
                     BenchmarkSingleModification(features_base_path,
                                                 features_modified_path,
+                                                distance_type,
                                                 threshold_start,
                                                 threshold_end,
                                                 threshold_step);
@@ -87,6 +92,7 @@ int main(int argc, const char *argv[]) {
                     string features_directory_path = vm["features_directory"].as<string>();
 
                     BenchmarkAllModifications(features_directory_path,
+                                              distance_type,
                                               threshold_start,
                                               threshold_end,
                                               threshold_step);
@@ -141,13 +147,16 @@ vector<string> ListFeatureFiles(const string &dir_path) {
 
 void BenchmarkSingleModification(const string &features_base_path,
                                  const string &features_modified_path,
+                                 const string &distance_type,
                                  float threshold_start,
                                  float threshold_end,
                                  float threshold_step) {
     vector<CnnFeatures> features_base = FeaturesHdf5IO::load(features_base_path);
     vector<CnnFeatures> features_modified = FeaturesHdf5IO::load(features_modified_path);
 
-    FeaturesIndex index(features_base);
+    CnnFeaturesDistanceFunction distance_function = MakeCnnFeaturesDistanceFunction(distance_type);
+    FeaturesIndex index(distance_function);
+    index.add(features_base);
 
     vector<float> thresholds = Benchmark::generate_thresholds(threshold_start, threshold_end, threshold_step);
 
@@ -157,6 +166,7 @@ void BenchmarkSingleModification(const string &features_base_path,
 }
 
 void BenchmarkAllModifications(const string &features_directory_path,
+                               const string &distance_type,
                                float threshold_start,
                                float threshold_end,
                                float threshold_step) {
@@ -164,7 +174,8 @@ void BenchmarkAllModifications(const string &features_directory_path,
     unsigned long nb_relevant = feature_files.size();
 
     // Load all features
-    FeaturesIndex index;
+    CnnFeaturesDistanceFunction distance_function = MakeCnnFeaturesDistanceFunction(distance_type);
+    FeaturesIndex index(distance_function);
     for (const string &file : feature_files) {
         vector<CnnFeatures> features = FeaturesHdf5IO::load(file);
         index.add(features);

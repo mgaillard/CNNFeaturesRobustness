@@ -9,9 +9,10 @@ using namespace std;
 
 class FeaturesIndex {
 public:
-    FeaturesIndex();
+    FeaturesIndex(const CnnFeaturesDistanceFunction& cnn_features_distance);
 
-    FeaturesIndex(const vector<CnnFeatures> &features);
+    FeaturesIndex(const CnnFeaturesDistanceFunction& cnn_features_distance, 
+                  const vector<CnnFeatures> &features);
 
     unsigned long size() const;
 
@@ -26,8 +27,9 @@ public:
     vector<pair<float, unsigned long> > search_knearest(const CnnFeatures &query_features, const unsigned long k) const;
 
 private:
-    vector<CnnFeatures> features_;
+    const CnnFeaturesDistanceFunction cnn_features_distance_;
 
+    vector<CnnFeatures> features_;
 };
 
 

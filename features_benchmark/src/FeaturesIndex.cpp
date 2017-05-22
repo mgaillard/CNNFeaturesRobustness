@@ -3,11 +3,14 @@
 
 #include "FeaturesIndex.h"
 
-FeaturesIndex::FeaturesIndex() {
+FeaturesIndex::FeaturesIndex(const CnnFeaturesDistanceFunction& cnn_features_distance) :
+        cnn_features_distance_(cnn_features_distance) {
 
 }
 
-FeaturesIndex::FeaturesIndex(const vector<CnnFeatures> &features) :
+FeaturesIndex::FeaturesIndex(const CnnFeaturesDistanceFunction& cnn_features_distance, 
+                             const vector<CnnFeatures> &features) :
+        cnn_features_distance_(cnn_features_distance),
         features_(features) {
 
 }
@@ -34,7 +37,7 @@ vector<pair<float, unsigned long> > FeaturesIndex::search_radius(const CnnFeatur
 
     #pragma omp parallel for shared(results)
     for (unsigned long i = 0; i < features_.size(); i++) {
-        float dist = CnnFeaturesDistanceSq(query_features, features_[i]);
+        float dist = cnn_features_distance_(query_features, features_[i]);
 
         if (dist <= threshold) {
             #pragma omp critical(results_update)
@@ -54,7 +57,7 @@ vector<pair<float, unsigned long> > FeaturesIndex::search_knearest(const CnnFeat
     priority_queue<pair<float, unsigned long> > k_nearest;
 
     for (unsigned long i = 0; i < features_.size(); i++) {
-        float dist = CnnFeaturesDistanceSq(query_features, features_[i]);
+        float dist = cnn_features_distance_(query_features, features_[i]);
 
         // There is not enough elements in the queue, we add a new element.
         if (k_nearest.size() < k) {

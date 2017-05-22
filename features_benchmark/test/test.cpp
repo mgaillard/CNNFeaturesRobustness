@@ -21,7 +21,7 @@ TEST_CASE("Features are indexed", "[features_index]") {
             {0, 4},
     };
 
-    FeaturesIndex index(features);
+    FeaturesIndex index(CnnFeaturesEuclideanDistanceSq, features);
 
     SECTION("Search in a radius of 1") {
         vector<pair<float, unsigned long> > results = index.search_radius({0, 5}, 1);
@@ -197,7 +197,7 @@ TEST_CASE("Benchmark with single modification are executed", "[benchmark_single]
             {1, 5},
     };
 
-    FeaturesIndex index(features_base);
+    FeaturesIndex index(CnnFeaturesEuclideanDistanceSq, features_base);
 
     SECTION("Threshold: 1 and 2") {
         vector<BenchmarkStats> stats = Benchmark::single_modification(index, features_modified, {1.0, 2.0});
@@ -234,7 +234,7 @@ TEST_CASE("Benchmark with all modifications are executed", "[benchmark_all]") {
             {2, 12},
     };
 
-    FeaturesIndex index;
+    FeaturesIndex index(CnnFeaturesEuclideanDistanceSq);
     index.add(features_a);
     index.add(features_b);
     index.add(features_c);

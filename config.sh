@@ -16,6 +16,7 @@ tmp_image_dir="images"
 
 declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10")
 declare -a cnn_model=("VGG16_block5_pool_avg" "VGG16_block5_pool_max")
+cnn_features_distance="euclidean_square"
 
 declare -A transformation_name
 transformation_name["base"]="Base"
