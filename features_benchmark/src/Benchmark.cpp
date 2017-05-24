@@ -18,8 +18,9 @@ vector<BenchmarkStats> Benchmark::single_modification(const FeaturesIndex &index
     for (unsigned long i = 0; i < features_modified.size(); i++) {
         vector<pair<float, unsigned long> > results = index.search_radius(features_modified[i], threshold_max);
 
-        for (BenchmarkStats& stat : stats) {
-            stat.process(results, {i});
+        #pragma omp parallel for shared(stats, results)
+        for (unsigned long s = 0; s < stats.size(); s++) {
+            stats[s].process(results, {i});
         }
     }
 
@@ -70,8 +71,9 @@ vector<BenchmarkStats> Benchmark::all_modifications(const FeaturesIndex &index,
             relevants[j] = base_relevants[j] + i % features_per_file;
         }
 
-        for (BenchmarkStats& stat : stats) {
-            stat.process(results, relevants);
+        #pragma omp parallel for shared(stats, results, relevants)
+        for (unsigned long s = 0; s < stats.size(); s++) {
+            stats[s].process(results, relevants);
         }
     }
 
