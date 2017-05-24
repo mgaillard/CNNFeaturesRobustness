@@ -9,6 +9,8 @@ from keras.applications.vgg16 import VGG16, preprocess_input
 
 import numpy as np
 
+from sklearn.preprocessing import normalize
+
 import h5py
 
 class Features:
@@ -38,8 +40,16 @@ class FeatureExtractor:
         # Model to extract features
         if model_type == 'VGG16_block5_pool_avg':
             self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='avg')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_block5_pool_avg_norm_l2':
+            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='avg')
+            self.normalization = 'l2'
         elif model_type == 'VGG16_block5_pool_max':
             self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='max')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_block5_pool_max_norm_l2':
+            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='max')
+            self.normalization = 'l2'
         else:
             raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
 
@@ -78,6 +88,9 @@ class FeatureExtractor:
 
         images = FeatureExtractor.load_images(path, features.images)
         features.features = self.cnn_model.predict(images)
+
+        if self.normalization in ['l1', 'l2', 'max']:
+            features.features = normalize(features.features, norm=self.normalization, axis=1)
 
         return features
 

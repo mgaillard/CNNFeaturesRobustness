@@ -15,8 +15,21 @@ tmp_image_dir="images"
 # |   └── crop10
 
 declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10")
-declare -a cnn_model=("VGG16_block5_pool_avg" "VGG16_block5_pool_max")
-cnn_features_distance="euclidean_square"
+# Possible models:
+# VGG16_block5_pool_avg
+# VGG16_block5_pool_avg_norm_l2
+# VGG16_block5_pool_max
+# VGG16_block5_pool_max_norm_l2
+declare -a cnn_model=("VGG16_block5_pool_avg" "VGG16_block5_pool_avg_norm_l2")
+# Possible distances: 'euclidean', 'euclidean_square', 'cosine'
+cnn_features_distance="euclidean"
+
+# Set to "true" to perform a benchmark on individual transformations
+individual_transformation_benchmark=true
+
+# Set to "true" to performa a benchmark on all modifications at the same time
+multiple_transformation_benchmark=true
+
 
 declare -A transformation_name
 transformation_name["base"]="Base"
@@ -73,16 +86,60 @@ transformation_command["crop16"]="mogrify -path $tmp_image_dir/crop16 -crop 84%x
 transformation_command["crop20"]="mogrify -path $tmp_image_dir/crop20 -crop 80%x100%+0+0 $tmp_image_dir/base/*"
 
 declare -A cnn_model_threshold_start
-cnn_model_threshold_start["VGG16_block5_pool_avg"]=100
-cnn_model_threshold_start["VGG16_block5_pool_max"]=5000
-
 declare -A cnn_model_threshold_end
-cnn_model_threshold_end["VGG16_block5_pool_avg"]=10000
-cnn_model_threshold_end["VGG16_block5_pool_max"]=500000
-
 declare -A cnn_model_threshold_step
-cnn_model_threshold_step["VGG16_block5_pool_avg"]=100
-cnn_model_threshold_step["VGG16_block5_pool_max"]=5000
+
+# VGG16_block5_pool_avg
+cnn_model_threshold_start["VGG16_block5_pool_avg_euclidean"]=0
+cnn_model_threshold_end["VGG16_block5_pool_avg_euclidean"]=200
+cnn_model_threshold_step["VGG16_block5_pool_avg_euclidean"]=2
+
+cnn_model_threshold_start["VGG16_block5_pool_avg_euclidean_square"]=100
+cnn_model_threshold_end["VGG16_block5_pool_avg_euclidean_square"]=10000
+cnn_model_threshold_step["VGG16_block5_pool_avg_euclidean_square"]=100
+
+cnn_model_threshold_start["VGG16_block5_pool_avg_cosine"]=0
+cnn_model_threshold_end["VGG16_block5_pool_avg_cosine"]=2
+cnn_model_threshold_step["VGG16_block5_pool_avg_cosine"]="0.02"
+
+# VGG16_block5_pool_avg_norm_l2
+cnn_model_threshold_start["VGG16_block5_pool_avg_norm_l2_euclidean"]=0
+cnn_model_threshold_end["VGG16_block5_pool_avg_norm_l2_euclidean"]=2
+cnn_model_threshold_step["VGG16_block5_pool_avg_norm_l2_euclidean"]="0.02"
+
+cnn_model_threshold_start["VGG16_block5_pool_avg_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_block5_pool_avg_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["VGG16_block5_pool_avg_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["VGG16_block5_pool_avg_norm_l2_cosine"]=0
+cnn_model_threshold_end["VGG16_block5_pool_avg_norm_l2_cosine"]=2
+cnn_model_threshold_step["VGG16_block5_pool_avg_norm_l2_cosine"]="0.02"
+
+# VGG16_block5_pool_max
+cnn_model_threshold_start["VGG16_block5_pool_max_euclidean"]=0
+cnn_model_threshold_end["VGG16_block5_pool_max_euclidean"]=400
+cnn_model_threshold_step["VGG16_block5_pool_max_euclidean"]=10
+
+cnn_model_threshold_start["VGG16_block5_pool_max_euclidean_square"]=5000
+cnn_model_threshold_end["VGG16_block5_pool_max_euclidean_square"]=500000
+cnn_model_threshold_step["VGG16_block5_pool_max_euclidean_square"]=5000
+
+cnn_model_threshold_start["VGG16_block5_pool_max_cosine"]=0
+cnn_model_threshold_end["VGG16_block5_pool_max_cosine"]=2
+cnn_model_threshold_step["VGG16_block5_pool_max_cosine"]="0.02"
+
+# VGG16_block5_pool_max
+cnn_model_threshold_start["VGG16_block5_pool_max_norm_l2_euclidean"]=0
+cnn_model_threshold_end["VGG16_block5_pool_max_norm_l2_euclidean"]=2
+cnn_model_threshold_step["VGG16_block5_pool_max_norm_l2_euclidean"]="0.02"
+
+cnn_model_threshold_start["VGG16_block5_pool_max_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_block5_pool_max_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["VGG16_block5_pool_max_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["VGG16_block5_pool_max_norm_l2_cosine"]=0
+cnn_model_threshold_end["VGG16_block5_pool_max_norm_l2_cosine"]=2
+cnn_model_threshold_step["VGG16_block5_pool_max_norm_l2_cosine"]="0.02"
 
 function trace {
     echo $1 ; date +"%m/%d/%Y %H:%M:%S" ; echo ""

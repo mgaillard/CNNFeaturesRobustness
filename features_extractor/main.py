@@ -24,7 +24,10 @@ def main():
 
     parser.add_argument('--model',
                         type=str,
-                        choices=['VGG16_block5_pool_avg', 'VGG16_block5_pool_max'],
+                        choices=['VGG16_block5_pool_avg',
+                                 'VGG16_block5_pool_avg_norm_l2',
+                                 'VGG16_block5_pool_max',
+                                 'VGG16_block5_pool_max_norm_l2'],
                         help='Which model to use to extract features',
                         default='VGG16_block5_pool_avg')
 
