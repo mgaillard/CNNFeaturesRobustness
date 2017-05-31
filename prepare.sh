@@ -8,14 +8,14 @@ mkdir results
 # Compile the program to compute the distance distributions
 mkdir features_distances_release
 cd features_distances_release
-cmake -DCMAKE_BUILD_TYPE=Release ../features_distances
+cmake -DCMAKE_BUILD_TYPE=Release -DWITH_NATIVE_ARCH=ON ../features_distances
 make -j 4
 cd ..
 
 # Compile the program to benchmark the features
 mkdir features_benchmark_release
 cd features_benchmark_release
-cmake -DCMAKE_BUILD_TYPE=Release ../features_benchmark
+cmake -DCMAKE_BUILD_TYPE=Release -DWITH_NATIVE_ARCH=ON ../features_benchmark
 make -j 4
 cd ..
 

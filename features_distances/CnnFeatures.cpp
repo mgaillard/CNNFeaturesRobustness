@@ -16,10 +16,15 @@ CnnFeaturesDistanceFunction MakeCnnFeaturesDistanceFunction(const string& distan
 }
 
 float CnnFeaturesEuclideanDistanceSq(const CnnFeatures &features_a, const CnnFeatures &features_b) {
+    const unsigned long n = features_a.size();
+    const float* a = features_a.data();
+    const float* b = features_b.data();
+
     float distance_sq = 0;
 
-    for (unsigned long i = 0; i < features_a.size(); i++) {
-        distance_sq += (features_a[i] - features_b[i]) * (features_a[i] - features_b[i]);
+    #pragma omp simd reduction(+:distance_sq)
+    for (unsigned long i = 0; i < n; i++) {
+        distance_sq += (a[i] - b[i]) * (a[i] - b[i]);
     }
 
     return distance_sq;
@@ -30,14 +35,19 @@ float CnnFeaturesEuclideanDistance(const CnnFeatures &features_a, const CnnFeatu
 }
 
 float CnnFeaturesCosineDistance(const CnnFeatures &features_a, const CnnFeatures &features_b) {
+    const unsigned long n = features_a.size();
+    const float* a = features_a.data();
+    const float* b = features_b.data();
+
     float dot_product = 0.0;
     float norm_a_sq = 0.0;
     float norm_b_sq = 0.0;
 
-    for (unsigned long i = 0; i < features_a.size(); i++) {
-        dot_product += features_a[i] * features_b[i];
-        norm_a_sq += features_a[i] * features_a[i];
-        norm_b_sq += features_b[i] * features_b[i];
+    #pragma omp simd reduction(+:dot_product, norm_a_sq, norm_b_sq)
+    for (unsigned long i = 0; i < n; i++) {
+        dot_product += a[i] * b[i];
+        norm_a_sq += a[i] * a[i];
+        norm_b_sq += b[i] * b[i];
     }
 
     return 1 - (dot_product / (sqrt(norm_a_sq) * sqrt(norm_b_sq)));
