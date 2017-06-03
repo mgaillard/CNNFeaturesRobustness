@@ -5,6 +5,8 @@ from os import listdir
 from os.path import isfile, join
 
 from keras.preprocessing import image
+from keras.models import Model
+from keras.layers.pooling import GlobalAveragePooling2D, GlobalMaxPooling2D
 from keras.applications.vgg16 import VGG16, preprocess_input
 
 import numpy as np
@@ -39,19 +41,54 @@ class FeatureExtractor:
     def __init__(self, model_type):
         # Model to extract features
         if model_type == 'VGG16_block5_pool_avg':
-            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='avg')
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_avg')
             self.normalization = 'None'
         elif model_type == 'VGG16_block5_pool_avg_norm_l2':
-            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='avg')
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_avg')
             self.normalization = 'l2'
         elif model_type == 'VGG16_block5_pool_max':
-            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='max')
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_max')
             self.normalization = 'None'
         elif model_type == 'VGG16_block5_pool_max_norm_l2':
-            self.cnn_model = VGG16(weights='imagenet', include_top=False, pooling='max')
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_max')
+            self.normalization = 'l2'
+        elif model_type == 'VGG16_block4_pool_avg':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_avg')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_block4_pool_avg_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_avg')
+            self.normalization = 'l2'
+        elif model_type == 'VGG16_block4_pool_max':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_max')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_block4_pool_max_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_max')
             self.normalization = 'l2'
         else:
             raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
+
+    
+    @staticmethod
+    def create_model(model_type):
+        if model_type == 'VGG16_block5_pool_avg':
+            return VGG16(weights='imagenet', include_top=False, pooling='avg')
+        elif model_type == 'VGG16_block5_pool_max':
+            return VGG16(weights='imagenet', include_top=False, pooling='max')
+        elif model_type == 'VGG16_block4_pool_avg':
+            base_model = VGG16(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('block4_pool').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'VGG16_block4_pool_max':
+            base_model = VGG16(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('block4_pool').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        else:
+            raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
+
 
     @staticmethod
     def list_images_directory(dir_path):
