@@ -26,7 +26,7 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # VGG16_block4_pool_max_norm_l2
 declare -a cnn_model=("VGG16_block5_pool_avg" "VGG16_block5_pool_max")
 # Possible distances: 'euclidean', 'euclidean_square', 'cosine'
-cnn_features_distance="cosine"
+declare -a cnn_features_distances=("euclidean" "cosine")
 
 # Set to "true" to perform a benchmark on individual transformations
 individual_transformation_benchmark=true

@@ -4,6 +4,11 @@ source config.sh
 
 # Result directory
 mkdir results
+for model in ${cnn_model[@]}; do
+    for distance in ${cnn_features_distances[@]}; do
+        mkdir "results/${model}_${distance}"
+    done
+done
 
 # Compile the program to compute the distance distributions
 mkdir features_distances_release
