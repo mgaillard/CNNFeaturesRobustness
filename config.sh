@@ -121,8 +121,8 @@ cnn_model_threshold_step["VGG16_block5_pool_avg_norm_l2_cosine"]="0.01"
 
 # VGG16_block5_pool_max
 cnn_model_threshold_start["VGG16_block5_pool_max_euclidean"]=0
-cnn_model_threshold_end["VGG16_block5_pool_max_euclidean"]=400
-cnn_model_threshold_step["VGG16_block5_pool_max_euclidean"]=10
+cnn_model_threshold_end["VGG16_block5_pool_max_euclidean"]=2500
+cnn_model_threshold_step["VGG16_block5_pool_max_euclidean"]=25
 
 cnn_model_threshold_start["VGG16_block5_pool_max_euclidean_square"]=5000
 cnn_model_threshold_end["VGG16_block5_pool_max_euclidean_square"]=500000
@@ -132,7 +132,7 @@ cnn_model_threshold_start["VGG16_block5_pool_max_cosine"]=0
 cnn_model_threshold_end["VGG16_block5_pool_max_cosine"]=1
 cnn_model_threshold_step["VGG16_block5_pool_max_cosine"]="0.01"
 
-# VGG16_block5_pool_max
+# VGG16_block5_pool_max_norm_l2
 cnn_model_threshold_start["VGG16_block5_pool_max_norm_l2_euclidean"]=0
 cnn_model_threshold_end["VGG16_block5_pool_max_norm_l2_euclidean"]=2
 cnn_model_threshold_step["VGG16_block5_pool_max_norm_l2_euclidean"]="0.02"
