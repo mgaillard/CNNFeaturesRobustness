@@ -31,7 +31,11 @@ def main():
                                  'VGG16_block4_pool_avg',
                                  'VGG16_block4_pool_avg_norm_l2',
                                  'VGG16_block4_pool_max',
-                                 'VGG16_block4_pool_max_norm_l2'],
+                                 'VGG16_block4_pool_max_norm_l2',
+                                 'VGG16_block3_pool_avg',
+                                 'VGG16_block3_pool_avg_norm_l2',
+                                 'VGG16_block3_pool_max',
+                                 'VGG16_block3_pool_max_norm_l2'],
                         help='Which model to use to extract features',
                         default='VGG16_block5_pool_avg')
 

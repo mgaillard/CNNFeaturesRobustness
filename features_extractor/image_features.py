@@ -64,6 +64,19 @@ class FeatureExtractor:
         elif model_type == 'VGG16_block4_pool_max_norm_l2':
             self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_max')
             self.normalization = 'l2'
+        elif model_type == 'VGG16_block3_pool_avg':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_avg')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_block3_pool_avg_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_avg')
+            self.normalization = 'l2'
+        elif model_type == 'VGG16_block3_pool_max':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_max')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_block3_pool_max_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_max')
+            self.normalization = 'l2'
+
         else:
             raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
 
@@ -84,6 +97,18 @@ class FeatureExtractor:
             base_model = VGG16(weights='imagenet', include_top=False)
             # add a global spatial average pooling layer
             maximized_model = base_model.get_layer('block4_pool').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'VGG16_block3_pool_avg':
+            base_model = VGG16(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('block3_pool').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'VGG16_block3_pool_max':
+            base_model = VGG16(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('block3_pool').output
             maximized_model = GlobalMaxPooling2D()(maximized_model)
             return Model(inputs=base_model.input, outputs=maximized_model)
         else:
