@@ -16,6 +16,13 @@ tmp_image_dir="images"
 
 declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10")
 # Possible models:
+# VGG16_predictions
+# VGG16_fc2
+# VGG16_fc2_norm_l2
+# VGG16_fc1
+# VGG16_fc1_norm_l2
+# VGG16_flatten
+# VGG16_flatten_norm_l2
 # VGG16_block5_pool_avg
 # VGG16_block5_pool_avg_norm_l2
 # VGG16_block5_pool_max
@@ -27,7 +34,7 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # VGG16_block3_pool_avg
 # VGG16_block3_pool_avg_norm_l2
 # VGG16_block3_pool_max
-# VGG16_block3_pool_max_norm_l
+# VGG16_block3_pool_max_norm_l2
 declare -a cnn_model=("VGG16_block5_pool_avg" "VGG16_block5_pool_max")
 # Possible distances: 'euclidean', 'euclidean_square', 'cosine'
 declare -a cnn_features_distances=("euclidean" "cosine")
@@ -96,6 +103,97 @@ transformation_command["crop20"]="mogrify -path $tmp_image_dir/crop20 -crop 80%x
 declare -A cnn_model_threshold_start
 declare -A cnn_model_threshold_end
 declare -A cnn_model_threshold_step
+
+# VGG16_predictions
+cnn_model_threshold_start["VGG16_predictions_euclidean"]=0
+cnn_model_threshold_end["VGG16_predictions_euclidean"]=1
+cnn_model_threshold_step["VGG16_predictions_euclidean"]="0.01"
+
+cnn_model_threshold_start["VGG16_predictions_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_predictions_euclidean_square"]=1
+cnn_model_threshold_step["VGG16_predictions_euclidean_square"]="0.01"
+
+cnn_model_threshold_start["VGG16_predictions_cosine"]=0
+cnn_model_threshold_end["VGG16_predictions_cosine"]=1
+cnn_model_threshold_step["VGG16_predictions_cosine"]="0.01"
+
+# VGG16_fc2
+cnn_model_threshold_start["VGG16_fc2_euclidean"]=0
+cnn_model_threshold_end["VGG16_fc2_euclidean"]=300
+cnn_model_threshold_step["VGG16_fc2_euclidean"]=3
+
+cnn_model_threshold_start["VGG16_fc2_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_fc2_euclidean_square"]=50000
+cnn_model_threshold_step["VGG16_fc2_euclidean_square"]=500
+
+cnn_model_threshold_start["VGG16_fc2_cosine"]=0
+cnn_model_threshold_end["VGG16_fc2_cosine"]=1
+cnn_model_threshold_step["VGG16_fc2_cosine"]="0.01"
+
+# VGG16_fc2_norm_l2
+cnn_model_threshold_start["VGG16_fc2_norm_l2_euclidean"]=0
+cnn_model_threshold_end["VGG16_fc2_norm_l2_euclidean"]=2
+cnn_model_threshold_step["VGG16_fc2_norm_l2_euclidean"]="0.02"
+
+cnn_model_threshold_start["VGG16_fc2_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_fc2_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["VGG16_fc2_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["VGG16_fc2_norm_l2_cosine"]=0
+cnn_model_threshold_end["VGG16_fc2_norm_l2_cosine"]=1
+cnn_model_threshold_step["VGG16_fc2_norm_l2_cosine"]="0.01"
+
+# VGG16_fc1
+cnn_model_threshold_start["VGG16_fc1_euclidean"]=0
+cnn_model_threshold_end["VGG16_fc1_euclidean"]=800
+cnn_model_threshold_step["VGG16_fc1_euclidean"]=8
+
+cnn_model_threshold_start["VGG16_fc1_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_fc1_euclidean_square"]=500000
+cnn_model_threshold_step["VGG16_fc1_euclidean_square"]=5000
+
+cnn_model_threshold_start["VGG16_fc1_cosine"]=0
+cnn_model_threshold_end["VGG16_fc1_cosine"]=1
+cnn_model_threshold_step["VGG16_fc1_cosine"]="0.01"
+
+# VGG16_fc1_norm_l2
+cnn_model_threshold_start["VGG16_fc1_norm_l2_euclidean"]=0
+cnn_model_threshold_end["VGG16_fc1_norm_l2_euclidean"]=2
+cnn_model_threshold_step["VGG16_fc1_norm_l2_euclidean"]="0.02"
+
+cnn_model_threshold_start["VGG16_fc1_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_fc1_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["VGG16_fc1_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["VGG16_fc1_norm_l2_cosine"]=0
+cnn_model_threshold_end["VGG16_fc1_norm_l2_cosine"]=1
+cnn_model_threshold_step["VGG16_fc1_norm_l2_cosine"]="0.01"
+
+# VGG16_flatten
+cnn_model_threshold_start["VGG16_flatten_euclidean"]=0
+cnn_model_threshold_end["VGG16_flatten_euclidean"]=3500
+cnn_model_threshold_step["VGG16_flatten_euclidean"]=35
+
+cnn_model_threshold_start["VGG16_flatten_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_flatten_euclidean_square"]=10000000
+cnn_model_threshold_step["VGG16_flatten_euclidean_square"]=100000
+
+cnn_model_threshold_start["VGG16_flatten_cosine"]=0
+cnn_model_threshold_end["VGG16_flatten_cosine"]=1
+cnn_model_threshold_step["VGG16_flatten_cosine"]="0.01"
+
+# VGG16_flatten_norm_l2
+cnn_model_threshold_start["VGG16_flatten_norm_l2_euclidean"]=0
+cnn_model_threshold_end["VGG16_flatten_norm_l2_euclidean"]=2
+cnn_model_threshold_step["VGG16_flatten_norm_l2_euclidean"]="0.02"
+
+cnn_model_threshold_start["VGG16_flatten_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["VGG16_flatten_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["VGG16_flatten_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["VGG16_flatten_norm_l2_cosine"]=0
+cnn_model_threshold_end["VGG16_flatten_norm_l2_cosine"]=1
+cnn_model_threshold_step["VGG16_flatten_norm_l2_cosine"]="0.01"
 
 # VGG16_block5_pool_avg
 cnn_model_threshold_start["VGG16_block5_pool_avg_euclidean"]=0

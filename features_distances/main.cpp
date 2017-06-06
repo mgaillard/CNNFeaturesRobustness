@@ -27,11 +27,16 @@ void compute_stats_similar(const CnnFeaturesDistanceFunction distance_function,
     accumulator_set<double, stats<tag::min,
             tag::max,
             tag::extended_p_square> > acc_similar(tag::extended_p_square::probabilities = quantile_probs);
-
+    
+    #pragma omp parallel for shared(acc_similar)
     for (unsigned int i = 0; i < base_features.size(); i++) {
         float d_similar = distance_function(base_features[i], similar_features[i]);
+        
         // Push distance to the accumulator.
-        acc_similar(d_similar);
+        #pragma omp critical(stats_update)
+        {
+            acc_similar(d_similar);
+        }
     }
 
     cout << extract_result<tag::min>(acc_similar) << '\t'
@@ -48,12 +53,16 @@ void compute_stats_nonsimilar(const CnnFeaturesDistanceFunction distance_functio
     accumulator_set<double, stats<tag::min,
             tag::max,
             tag::extended_p_square> > acc_nonsimilar(tag::extended_p_square::probabilities = quantile_probs);
-
+    
+    #pragma omp parallel for shared(acc_nonsimilar) schedule(dynamic, 4)
     for (unsigned int i = 0; i < features.size(); i++) {
         for (unsigned int j = i + 1; j < features.size(); j++) {
             float d_nonsimilar = distance_function(features[i], features[j]);
-
-            acc_nonsimilar(d_nonsimilar);
+            
+            #pragma omp critical(stats_update)
+            {
+                acc_nonsimilar(d_nonsimilar);
+            }
         }
     }
 

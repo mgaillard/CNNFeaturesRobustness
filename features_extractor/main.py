@@ -7,6 +7,8 @@ import sys
 
 from os.path import isdir
 
+import numpy as np
+
 from image_features import FeatureExtractor, FeaturesNpzIO, FeaturesHdf5IO
 
 def main():
@@ -24,7 +26,14 @@ def main():
 
     parser.add_argument('--model',
                         type=str,
-                        choices=['VGG16_block5_pool_avg',
+                        choices=['VGG16_predictions',
+                                 'VGG16_fc2',
+                                 'VGG16_fc2_norm_l2',
+                                 'VGG16_fc1',
+                                 'VGG16_fc1_norm_l2',
+                                 'VGG16_flatten',
+                                 'VGG16_flatten_norm_l2',
+                                 'VGG16_block5_pool_avg',
                                  'VGG16_block5_pool_avg_norm_l2',
                                  'VGG16_block5_pool_max',
                                  'VGG16_block5_pool_max_norm_l2',
@@ -50,10 +59,19 @@ def main():
     if not isdir(args.directory):
         print('The provided directory doesn\'t exist.')
         sys.exit()
-
+    
+    # Extract features
     extractor = FeatureExtractor(args.model)
     features = extractor.extract(args.directory)
 
+    # Display information about the features
+    print('Number of images: {}'.format(features.features.shape[0]))
+    print('Features shape: {}'.format(features.features.shape))
+    print('Mean of the features of the first image: {}'.format(np.mean(features.features[0])))
+    print('L2 norm of the features of the first image: {}'.format(np.linalg.norm(features.features[0], 2)))
+    print('Features of the first image:\n{}'.format(features.features[0]))
+
+    # Save the features
     if args.format == 'npz':
         FeaturesNpzIO.save(args.output, features)
     elif args.format == 'h5':

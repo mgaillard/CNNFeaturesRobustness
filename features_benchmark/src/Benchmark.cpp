@@ -1,8 +1,14 @@
 #include <iostream>
+#include <fstream>
+
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
 
 #include "Benchmark.h"
 
 using namespace std;
+using namespace boost::accumulators;
 
 vector<BenchmarkStats> Benchmark::single_modification(const FeaturesIndex &index,
                                                       const vector<CnnFeatures> &features_modified,
@@ -90,11 +96,38 @@ vector<float> Benchmark::generate_thresholds(float start, float end, float step)
     return thresholds;
 }
 
-void Benchmark::display_stats(const vector<BenchmarkStats> &stats) {
-    for (const BenchmarkStats &stat : stats) {
-        cout << stat.threshold() << "\t"
-             << stat.mean_precision() << "\t"
-             << stat.mean_recall() << "\t"
-             << stat.mean_f1measure() << endl;
+void Benchmark::display_features_information(const vector<CnnFeatures>& features) {
+    // Compute the mean of the features of the first image.
+    accumulator_set<double, stats<tag::mean> > first_image_stats;
+    for (const float &feature : features.front()) {
+        first_image_stats(feature);
+    }
+
+    cout << "Number of images: " << features.size() << endl
+         << "Features shape: (" << features.size() << ", " <<  features.front().size() << ")" << endl
+         << "Mean of the features of the first image: " << extract_result<tag::mean>(first_image_stats) << endl
+         << "First features of the first image: " << endl;
+    
+    // Display the features of the first image.
+    unsigned int feature_size = features.front().size();
+    for (unsigned int i = 0; i < min(feature_size, 16U); i++) {
+        cout << features.front()[i] << " ";
+    }
+    cout << endl << endl;
+}
+
+void Benchmark::save_stats(const vector<BenchmarkStats> &stats, const string &filename) {
+    ofstream out_file(filename, ios::out | ios::trunc);
+    if (out_file.is_open()) {
+        for (const BenchmarkStats &stat : stats) {
+            out_file << stat.threshold() << "\t"
+                     << stat.mean_precision() << "\t"
+                     << stat.mean_recall() << "\t"
+                     << stat.mean_f1measure() << endl;
+        }
+
+        out_file.close();
+    } else {
+        cout << "Unable to open output file";
     }
 }

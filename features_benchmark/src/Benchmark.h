@@ -21,7 +21,9 @@ public:
 
     static vector<float> generate_thresholds(float start, float end, float step);
 
-    static void display_stats(const vector<BenchmarkStats> &stats);
+    static void display_features_information(const vector<CnnFeatures>& features);
+
+    static void save_stats(const vector<BenchmarkStats> &stats, const string &filename);
 };
 
 #endif //CNNFEATURESBENCHMARK_BENCHMARK_H

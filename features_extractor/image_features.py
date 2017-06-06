@@ -40,7 +40,28 @@ class FeatureExtractor:
 
     def __init__(self, model_type):
         # Model to extract features
-        if model_type == 'VGG16_block5_pool_avg':
+        if model_type == 'VGG16_predictions':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_predictions')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_fc2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_fc2')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_fc2_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_fc2')
+            self.normalization = 'l2'
+        elif model_type == 'VGG16_fc1':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_fc1')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_fc1_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_fc1')
+            self.normalization = 'l2'
+        elif model_type == 'VGG16_flatten':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_flatten')
+            self.normalization = 'None'
+        elif model_type == 'VGG16_flatten_norm_l2':
+            self.cnn_model = FeatureExtractor.create_model('VGG16_flatten')
+            self.normalization = 'l2'
+        elif model_type == 'VGG16_block5_pool_avg':
             self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_avg')
             self.normalization = 'None'
         elif model_type == 'VGG16_block5_pool_avg_norm_l2':
@@ -76,14 +97,24 @@ class FeatureExtractor:
         elif model_type == 'VGG16_block3_pool_max_norm_l2':
             self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_max')
             self.normalization = 'l2'
-
         else:
             raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
 
     
     @staticmethod
     def create_model(model_type):
-        if model_type == 'VGG16_block5_pool_avg':
+        if model_type == 'VGG16_predictions':
+            return VGG16(weights='imagenet')
+        elif model_type == 'VGG16_fc2':
+            base_model = VGG16(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('fc2').output)
+        elif model_type == 'VGG16_fc1':
+            base_model = VGG16(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('fc1').output)
+        elif model_type == 'VGG16_flatten':
+            base_model = VGG16(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('flatten').output)
+        elif model_type == 'VGG16_block5_pool_avg':
             return VGG16(weights='imagenet', include_top=False, pooling='avg')
         elif model_type == 'VGG16_block5_pool_max':
             return VGG16(weights='imagenet', include_top=False, pooling='max')
