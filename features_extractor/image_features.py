@@ -7,7 +7,8 @@ from os.path import isfile, join
 from keras.preprocessing import image
 from keras.models import Model
 from keras.layers.pooling import GlobalAveragePooling2D, GlobalMaxPooling2D
-from keras.applications.vgg16 import VGG16, preprocess_input
+import keras.applications.vgg16 as app_vgg16
+import keras.applications.vgg19 as app_vgg19
 
 import numpy as np
 
@@ -33,117 +34,156 @@ class Features:
         return len(self.images)
 
 
-class FeatureExtractor:
+class VGG16Extractor:
     """
-    Extract image features
+    Create models and preprocess images with a VGG16 neural network.
     """
 
-    def __init__(self, model_type):
-        # Model to extract features
-        if model_type == 'VGG16_predictions':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_predictions')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_fc2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_fc2')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_fc2_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_fc2')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_fc1':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_fc1')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_fc1_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_fc1')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_flatten':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_flatten')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_flatten_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_flatten')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_block5_pool_avg':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_avg')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_block5_pool_avg_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_avg')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_block5_pool_max':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_max')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_block5_pool_max_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block5_pool_max')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_block4_pool_avg':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_avg')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_block4_pool_avg_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_avg')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_block4_pool_max':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_max')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_block4_pool_max_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block4_pool_max')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_block3_pool_avg':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_avg')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_block3_pool_avg_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_avg')
-            self.normalization = 'l2'
-        elif model_type == 'VGG16_block3_pool_max':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_max')
-            self.normalization = 'None'
-        elif model_type == 'VGG16_block3_pool_max_norm_l2':
-            self.cnn_model = FeatureExtractor.create_model('VGG16_block3_pool_max')
-            self.normalization = 'l2'
-        else:
-            raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
-
-    
+    """
+    Create a model based on the VGG16 neural network.
+    """
     @staticmethod
     def create_model(model_type):
         if model_type == 'VGG16_predictions':
-            return VGG16(weights='imagenet')
+            return app_vgg16.VGG16(weights='imagenet')
         elif model_type == 'VGG16_fc2':
-            base_model = VGG16(weights='imagenet')
+            base_model = app_vgg16.VGG16(weights='imagenet')
             return Model(inputs=base_model.input, outputs=base_model.get_layer('fc2').output)
         elif model_type == 'VGG16_fc1':
-            base_model = VGG16(weights='imagenet')
+            base_model = app_vgg16.VGG16(weights='imagenet')
             return Model(inputs=base_model.input, outputs=base_model.get_layer('fc1').output)
         elif model_type == 'VGG16_flatten':
-            base_model = VGG16(weights='imagenet')
+            base_model = app_vgg16.VGG16(weights='imagenet')
             return Model(inputs=base_model.input, outputs=base_model.get_layer('flatten').output)
         elif model_type == 'VGG16_block5_pool_avg':
-            return VGG16(weights='imagenet', include_top=False, pooling='avg')
+            return app_vgg16.VGG16(weights='imagenet', include_top=False, pooling='avg')
         elif model_type == 'VGG16_block5_pool_max':
-            return VGG16(weights='imagenet', include_top=False, pooling='max')
+            return app_vgg16.VGG16(weights='imagenet', include_top=False, pooling='max')
         elif model_type == 'VGG16_block4_pool_avg':
-            base_model = VGG16(weights='imagenet', include_top=False)
+            base_model = app_vgg16.VGG16(weights='imagenet', include_top=False)
             # add a global spatial average pooling layer
             averaged_model = base_model.get_layer('block4_pool').output
             averaged_model = GlobalAveragePooling2D()(averaged_model)
             return Model(inputs=base_model.input, outputs=averaged_model)
         elif model_type == 'VGG16_block4_pool_max':
-            base_model = VGG16(weights='imagenet', include_top=False)
+            base_model = app_vgg16.VGG16(weights='imagenet', include_top=False)
             # add a global spatial average pooling layer
             maximized_model = base_model.get_layer('block4_pool').output
             maximized_model = GlobalMaxPooling2D()(maximized_model)
             return Model(inputs=base_model.input, outputs=maximized_model)
         elif model_type == 'VGG16_block3_pool_avg':
-            base_model = VGG16(weights='imagenet', include_top=False)
+            base_model = app_vgg16.VGG16(weights='imagenet', include_top=False)
             # add a global spatial average pooling layer
             averaged_model = base_model.get_layer('block3_pool').output
             averaged_model = GlobalAveragePooling2D()(averaged_model)
             return Model(inputs=base_model.input, outputs=averaged_model)
         elif model_type == 'VGG16_block3_pool_max':
-            base_model = VGG16(weights='imagenet', include_top=False)
+            base_model = app_vgg16.VGG16(weights='imagenet', include_top=False)
             # add a global spatial average pooling layer
             maximized_model = base_model.get_layer('block3_pool').output
             maximized_model = GlobalMaxPooling2D()(maximized_model)
             return Model(inputs=base_model.input, outputs=maximized_model)
         else:
             raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
+    
+    """
+    Load an image for the VGG16 neural network.
+    """
+    @staticmethod
+    def load_image(image_path):
+        img = image.load_img(image_path, target_size=(224, 224))
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        return app_vgg16.preprocess_input(img_array)
+
+
+class VGG19Extractor:
+    """
+    Create models and preprocess images with a VGG19 neural network.
+    """
+
+    """
+    Create a model based on the VGG19 neural network.
+    """
+    @staticmethod
+    def create_model(model_type):
+        if model_type == 'VGG19_predictions':
+            return app_vgg19.VGG19(weights='imagenet')
+        elif model_type == 'VGG19_fc2':
+            base_model = app_vgg19.VGG19(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('fc2').output)
+        elif model_type == 'VGG19_fc1':
+            base_model = app_vgg19.VGG19(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('fc1').output)
+        elif model_type == 'VGG19_flatten':
+            base_model = app_vgg19.VGG19(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('flatten').output)
+        elif model_type == 'VGG19_block5_pool_avg':
+            return app_vgg19.VGG19(weights='imagenet', include_top=False, pooling='avg')
+        elif model_type == 'VGG19_block5_pool_max':
+            return app_vgg19.VGG19(weights='imagenet', include_top=False, pooling='max')
+        elif model_type == 'VGG19_block4_pool_avg':
+            base_model = app_vgg19.VGG19(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('block4_pool').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'VGG19_block4_pool_max':
+            base_model = app_vgg19.VGG19(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('block4_pool').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'VGG19_block3_pool_avg':
+            base_model = app_vgg19.VGG19(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('block3_pool').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'VGG19_block3_pool_max':
+            base_model = app_vgg19.VGG19(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('block3_pool').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        else:
+            raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
+    
+    """
+    Load an image for the VGG19 neural network.
+    """
+    @staticmethod
+    def load_image(image_path):
+        img = image.load_img(image_path, target_size=(224, 224))
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        return app_vgg19.preprocess_input(img_array)
+
+
+class FeatureExtractor:
+    """
+    Extract image features
+    """
+
+    def __init__(self, model_type):
+        # Neural network to extract features
+        if model_type.startswith("VGG16"):
+            self.extractor = VGG16Extractor()
+        elif model_type.startswith("VGG19"):
+            self.extractor = VGG19Extractor()
+        else:
+            raise ValueError('The neural network in the model type for the FeatureExtractor doesn\'t exist')
+        
+        # Application of a normalization
+        if model_type.endswith('_norm_l2'):
+            self.normalization = 'l2'
+            # Erase the norm in the model.
+            model_type = model_type[:-8]
+        else:
+            self.normalization = 'None'
+        
+        # Create the model
+        self.cnn_model = self.extractor.create_model(model_type)
 
 
     @staticmethod
@@ -157,19 +197,10 @@ class FeatureExtractor:
         return files
 
 
-    @staticmethod
-    def load_image(image_path):
-        img = image.load_img(image_path, target_size=(224, 224))
-        img_array = image.img_to_array(img)
-        img_array = np.expand_dims(img_array, axis=0)
-        return preprocess_input(img_array)
-
-
-    @staticmethod
-    def load_images(path, image_files):
+    def load_images(self, path, image_files):
         images = []
         for img in image_files:
-            images.append(FeatureExtractor.load_image(join(path, img)))
+            images.append(self.extractor.load_image(join(path, img)))
         return np.concatenate(images)
 
 
@@ -177,9 +208,9 @@ class FeatureExtractor:
         features = Features()
 
         features.directory_path = path
-        features.images = FeatureExtractor.list_images_directory(path)
+        features.images = self.list_images_directory(path)
 
-        images = FeatureExtractor.load_images(path, features.images)
+        images = self.load_images(path, features.images)
         features.features = self.cnn_model.predict(images)
 
         if self.normalization in ['l1', 'l2', 'max']:

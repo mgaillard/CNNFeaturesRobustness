@@ -3,19 +3,21 @@
 source config.sh
 
 # Run the program to compute the distance distributions
-cd features_distances_release
-for model in ${cnn_model[@]}; do
-    for distance in ${cnn_features_distances[@]}; do
-        model_distance="${model}_${distance}"
-        result_directory="../results/${model_distance}"
-        result_dat_file="$result_directory/distributions_${model_distance}.dat"
-        result_png_file="$result_directory/distributions_${model_distance}.png"
+if [ "$distribution_benchmark" = true ] ; then
+    cd features_distances_release
+    for model in ${cnn_model[@]}; do
+        for distance in ${cnn_features_distances[@]}; do
+            model_distance="${model}_${distance}"
+            result_directory="../results/${model_distance}"
+            result_dat_file="$result_directory/distributions_${model_distance}.dat"
+            result_png_file="$result_directory/distributions_${model_distance}.png"
 
-        ./CNNFeaturesDistances --features_directory "../features/$model" --distance $distance > $result_dat_file
-        gnuplot -e "filename='$result_dat_file'" "../plot/distributions.pg" > $result_png_file
+            ./CNNFeaturesDistances --features_directory "../features/$model" --distance $distance > $result_dat_file
+            gnuplot -e "filename='$result_dat_file'" "../plot/distributions.pg" > $result_png_file
+        done
     done
-done
-cd ..
+    cd ..
+fi
 
 # Run the program to benchmark the features
 cd features_benchmark_release
