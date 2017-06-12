@@ -9,6 +9,7 @@ from keras.models import Model
 from keras.layers.pooling import GlobalAveragePooling2D, GlobalMaxPooling2D
 import keras.applications.vgg16 as app_vgg16
 import keras.applications.vgg19 as app_vgg19
+import keras.applications.resnet50 as app_resnet50
 
 import numpy as np
 
@@ -160,6 +161,39 @@ class VGG19Extractor:
         return app_vgg19.preprocess_input(img_array)
 
 
+class ResNet50Extractor:
+    """
+    Create models and preprocess images with a ResNet50 neural network.
+    """
+
+    """
+    Create a model based on the ResNet50 neural network.
+    """
+    @staticmethod
+    def create_model(model_type):
+        if model_type == 'ResNet50_predictions':
+            return app_resnet50.ResNet50(weights='imagenet')
+        elif model_type == 'ResNet50_flatten_1':
+            base_model = app_resnet50.ResNet50(weights='imagenet')
+            return Model(inputs=base_model.input, outputs=base_model.get_layer('flatten_1').output)
+        elif model_type == 'ResNet50_avg_pool_avg':
+            return app_resnet50.ResNet50(weights='imagenet', include_top=False, pooling='avg')
+        elif model_type == 'ResNet50_avg_pool_max':
+            return app_resnet50.ResNet50(weights='imagenet', include_top=False, pooling='max')
+        else:
+            raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
+    
+    """
+    Load an image for the ResNet50 neural network.
+    """
+    @staticmethod
+    def load_image(image_path):
+        img = image.load_img(image_path, target_size=(224, 224))
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        return app_resnet50.preprocess_input(img_array)
+
+
 class FeatureExtractor:
     """
     Extract image features
@@ -171,6 +205,8 @@ class FeatureExtractor:
             self.extractor = VGG16Extractor()
         elif model_type.startswith("VGG19"):
             self.extractor = VGG19Extractor()
+        elif model_type.startswith("ResNet50"):
+            self.extractor = ResNet50Extractor()
         else:
             raise ValueError('The neural network in the model type for the FeatureExtractor doesn\'t exist')
         

@@ -16,6 +16,13 @@ tmp_image_dir="images"
 
 declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate5" "crop10")
 # Possible models:
+# ResNet50_predictions
+# ResNet50_flatten_1
+# ResNet50_flatten_1_norm_l2
+# ResNet50_avg_pool_avg
+# ResNet50_avg_pool_avg_norm_l2
+# ResNet50_avg_pool_max
+# ResNet50_avg_pool_max_norm_l2
 # VGG16_predictions
 # VGG16_fc2
 # VGG16_fc2_norm_l2
@@ -619,6 +626,98 @@ cnn_model_threshold_step["VGG19_block3_pool_max_norm_l2_euclidean_square"]="0.01
 cnn_model_threshold_start["VGG19_block3_pool_max_norm_l2_cosine"]=0
 cnn_model_threshold_end["VGG19_block3_pool_max_norm_l2_cosine"]=1
 cnn_model_threshold_step["VGG19_block3_pool_max_norm_l2_cosine"]="0.01"
+
+# ResNet50_predictions
+cnn_model_threshold_start["ResNet50_predictions_euclidean"]=0
+cnn_model_threshold_end["ResNet50_predictions_euclidean"]="1.5"
+cnn_model_threshold_step["ResNet50_predictions_euclidean"]="0.01"
+
+cnn_model_threshold_start["ResNet50_predictions_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_predictions_euclidean_square"]=2
+cnn_model_threshold_step["ResNet50_predictions_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["ResNet50_predictions_cosine"]=0
+cnn_model_threshold_end["ResNet50_predictions_cosine"]=1
+cnn_model_threshold_step["ResNet50_predictions_cosine"]="0.01"
+
+# ResNet50_flatten_1
+cnn_model_threshold_start["ResNet50_flatten_1_euclidean"]=0
+cnn_model_threshold_end["ResNet50_flatten_1_euclidean"]=200
+cnn_model_threshold_step["ResNet50_flatten_1_euclidean"]=2
+
+cnn_model_threshold_start["ResNet50_flatten_1_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_flatten_1_euclidean_square"]=4000
+cnn_model_threshold_step["ResNet50_flatten_1_euclidean_square"]=40
+
+cnn_model_threshold_start["ResNet50_flatten_1_cosine"]=0
+cnn_model_threshold_end["ResNet50_flatten_1_cosine"]=1
+cnn_model_threshold_step["ResNet50_flatten_1_cosine"]="0.01"
+
+# ResNet50_flatten_1_norm_l2
+cnn_model_threshold_start["ResNet50_flatten_1_norm_l2_euclidean"]=0
+cnn_model_threshold_end["ResNet50_flatten_1_norm_l2_euclidean"]="1.5"
+cnn_model_threshold_step["ResNet50_flatten_1_norm_l2_euclidean"]="0.01"
+
+cnn_model_threshold_start["ResNet50_flatten_1_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_flatten_1_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["ResNet50_flatten_1_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["ResNet50_flatten_1_norm_l2_cosine"]=0
+cnn_model_threshold_end["ResNet50_flatten_1_norm_l2_cosine"]=1
+cnn_model_threshold_step["ResNet50_flatten_1_norm_l2_cosine"]="0.01"
+
+# ResNet50_avg_pool_avg
+cnn_model_threshold_start["ResNet50_avg_pool_avg_euclidean"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_avg_euclidean"]=200
+cnn_model_threshold_step["ResNet50_avg_pool_avg_euclidean"]=2
+
+cnn_model_threshold_start["ResNet50_avg_pool_avg_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_avg_euclidean_square"]=4000
+cnn_model_threshold_step["ResNet50_avg_pool_avg_euclidean_square"]=40
+
+cnn_model_threshold_start["ResNet50_avg_pool_avg_cosine"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_avg_cosine"]=1
+cnn_model_threshold_step["ResNet50_avg_pool_avg_cosine"]="0.01"
+
+# ResNet50_avg_pool_avg_norm_l2
+cnn_model_threshold_start["ResNet50_avg_pool_avg_norm_l2_euclidean"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_avg_norm_l2_euclidean"]="1.5"
+cnn_model_threshold_step["ResNet50_avg_pool_avg_norm_l2_euclidean"]="0.01"
+
+cnn_model_threshold_start["ResNet50_avg_pool_avg_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_avg_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["ResNet50_avg_pool_avg_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["ResNet50_avg_pool_avg_norm_l2_cosine"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_avg_norm_l2_cosine"]=1
+cnn_model_threshold_step["ResNet50_avg_pool_avg_norm_l2_cosine"]="0.01"
+
+# ResNet50_avg_pool_max
+cnn_model_threshold_start["ResNet50_avg_pool_max_euclidean"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_max_euclidean"]=200
+cnn_model_threshold_step["ResNet50_avg_pool_max_euclidean"]=2
+
+cnn_model_threshold_start["ResNet50_avg_pool_max_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_max_euclidean_square"]=4000
+cnn_model_threshold_step["ResNet50_avg_pool_max_euclidean_square"]=40
+
+cnn_model_threshold_start["ResNet50_avg_pool_max_cosine"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_max_cosine"]=1
+cnn_model_threshold_step["ResNet50_avg_pool_max_cosine"]="0.01"
+
+# ResNet50_avg_pool_max_norm_l2
+cnn_model_threshold_start["ResNet50_avg_pool_max_norm_l2_euclidean"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_max_norm_l2_euclidean"]="1.5"
+cnn_model_threshold_step["ResNet50_avg_pool_max_norm_l2_euclidean"]="0.01"
+
+cnn_model_threshold_start["ResNet50_avg_pool_max_norm_l2_euclidean_square"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_max_norm_l2_euclidean_square"]=2
+cnn_model_threshold_step["ResNet50_avg_pool_max_norm_l2_euclidean_square"]="0.02"
+
+cnn_model_threshold_start["ResNet50_avg_pool_max_norm_l2_cosine"]=0
+cnn_model_threshold_end["ResNet50_avg_pool_max_norm_l2_cosine"]=1
+cnn_model_threshold_step["ResNet50_avg_pool_max_norm_l2_cosine"]="0.01"
+
 
 function trace {
     echo $1 ; date +"%m/%d/%Y %H:%M:%S" ; echo ""
