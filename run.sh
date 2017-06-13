@@ -3,21 +3,30 @@
 source config.sh
 
 # Run the program to compute the distance distributions
-if [ "$distribution_benchmark" = true ] ; then
-    cd features_distances_release
-    for model in ${cnn_model[@]}; do
-        for distance in ${cnn_features_distances[@]}; do
-            model_distance="${model}_${distance}"
-            result_directory="../results/${model_distance}"
-            result_dat_file="$result_directory/distributions_${model_distance}.dat"
-            result_png_file="$result_directory/distributions_${model_distance}.png"
+cd features_distances_release
+for model in ${cnn_model[@]}; do
+    for distance in ${cnn_features_distances[@]}; do
+        model_distance="${model}_${distance}"
+        result_directory="../results/${model_distance}"
+        result_dat_file="$result_directory/distributions_${model_distance}.dat"
+        result_png_file="$result_directory/distributions_${model_distance}.png"
 
-            ./CNNFeaturesDistances --features_directory "../features/$model" --distance $distance > $result_dat_file
-            gnuplot -e "filename='$result_dat_file'" "../plot/distributions.pg" > $result_png_file
-        done
+        trace "Distribution of distances: $model_distance"
+        ./CNNFeaturesDistances --features_directory "../features/$model" --distance $distance > $result_dat_file
+        gnuplot -e "filename='$result_dat_file'" "../plot/distributions.pg" > $result_png_file
+
+        # Compute the thresholds for the benchmark. The end threshold is the median of the distances between non similar images.
+        cnn_model_threshold_start[$model_distance]=0
+        # The end threshold is the median of the distances between the non similar images. If the median is less than 1, the end threshold is fixed at 1.
+        cnn_model_threshold_end[$model_distance]=$(awk '{if($1=="non-similar"){if(int($5) < 1){print 1}else{print int($5)}}}' $result_dat_file)
+        cnn_model_threshold_step[$model_distance]=$(bc <<< "scale=3;${cnn_model_threshold_end[$model_distance]} / 100")
+
+        echo "threshold_start=${cnn_model_threshold_start[$model_distance]}"
+        echo "threshold_end=${cnn_model_threshold_end[$model_distance]}"
+        echo "threshold_step=${cnn_model_threshold_step[$model_distance]}"
     done
-    cd ..
-fi
+done
+cd ..
 
 # Run the program to benchmark the features
 cd features_benchmark_release
