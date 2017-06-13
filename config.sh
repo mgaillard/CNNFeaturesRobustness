@@ -65,15 +65,11 @@ declare -a cnn_model=("VGG16_block5_pool_avg" "VGG16_block5_pool_max")
 # Possible distances: 'euclidean', 'euclidean_square', 'cosine'
 declare -a cnn_features_distances=("euclidean" "cosine")
 
-# Set to "true" to compute the distributions of distances
-distribution_benchmark=true
-
 # Set to "true" to perform a benchmark on individual transformations
 individual_transformation_benchmark=true
 
 # Set to "true" to performa a benchmark on all modifications at the same time
 multiple_transformation_benchmark=true
-
 
 declare -A transformation_name
 transformation_name["base"]="Base"
