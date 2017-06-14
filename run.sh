@@ -34,14 +34,13 @@ cd features_benchmark_release
 # Reset the txt result file
 result_txt_file="../results/results.txt"
 echo "Results of CNNFeaturesBenchmark" > $result_txt_file
+echo -e "Model\tDistance\tTransformation\tThreshold\tPrecision\tRecall\tF1-measure" >> $result_txt_file
 
 # Run the benchmark
 for model in ${cnn_model[@]}; do
     for distance in ${cnn_features_distances[@]}; do
         model_distance="${model}_${distance}"
         result_directory="../results/${model_distance}"
-
-        echo -e "\n$model_distance" >> $result_txt_file
 
         # Benchmark on all modifications at the same time
         if [ "$multiple_transformation_benchmark" = true ] ; then
@@ -53,7 +52,7 @@ for model in ${cnn_model[@]}; do
             # Plot the results
             gnuplot -e "filename='$result_dat_file';name='$model Features (all) $distance'" "../plot/threshold.pg" > $result_png_file
             # Add the best f1-measure line to the result
-            echo -ne 'all\t' >> $result_txt_file
+            echo -ne "${model}\t${distance}\tall\t" >> $result_txt_file
             awk -v max=0 '{if($4>max){line=$0; max=$4}}END{print line}' $result_dat_file >> $result_txt_file
         fi
 
@@ -68,7 +67,7 @@ for model in ${cnn_model[@]}; do
                 # Plot the results
                 gnuplot -e "filename='$result_dat_file';name='$model Features ($t) $distance'" "../plot/threshold.pg" > $result_png_file
                 # Add the best f1-measure line to the result
-                echo -ne "$t\t" >> $result_txt_file
+                echo -ne "${model}\t${distance}\t${t}\t" >> $result_txt_file
                 awk -v max=0 '{if($4>max){line=$0; max=$4}}END{print line}' $result_dat_file >> $result_txt_file
             done
         fi
