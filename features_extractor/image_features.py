@@ -180,6 +180,90 @@ class ResNet50Extractor:
             return app_resnet50.ResNet50(weights='imagenet', include_top=False, pooling='avg')
         elif model_type == 'ResNet50_avg_pool_max':
             return app_resnet50.ResNet50(weights='imagenet', include_top=False, pooling='max')
+        elif model_type == 'ResNet50_activation_46_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_46').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_46_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_46').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'ResNet50_activation_43_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_43').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_43_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_43').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'ResNet50_activation_40_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_40').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_40_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_40').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'ResNet50_activation_37_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_37').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_37_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_37').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'ResNet50_activation_34_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_34').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_34_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_34').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'ResNet50_activation_31_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_31').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_31_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_31').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
+        elif model_type == 'ResNet50_activation_28_avg':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            averaged_model = base_model.get_layer('activation_28').output
+            averaged_model = GlobalAveragePooling2D()(averaged_model)
+            return Model(inputs=base_model.input, outputs=averaged_model)
+        elif model_type == 'ResNet50_activation_28_max':
+            base_model = app_resnet50.ResNet50(weights='imagenet', include_top=False)
+            # add a global spatial average pooling layer
+            maximized_model = base_model.get_layer('activation_28').output
+            maximized_model = GlobalMaxPooling2D()(maximized_model)
+            return Model(inputs=base_model.input, outputs=maximized_model)
         else:
             raise ValueError('The model type for the FeatureExtractor doesn\'t exist')
     
