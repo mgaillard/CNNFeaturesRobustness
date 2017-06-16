@@ -19,8 +19,6 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # InceptionV3_predictions
 # InceptionV3_mixed10_avg
 # InceptionV3_mixed10_max
-# InceptionV3_mixed10_avg
-# InceptionV3_mixed10_max
 # InceptionV3_mixed9_avg
 # InceptionV3_mixed9_max
 # InceptionV3_mixed8_avg

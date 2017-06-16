@@ -431,7 +431,7 @@ class InceptionV3Extractor:
             return app_inception_v3.InceptionV3(weights='imagenet')
         elif model_type == 'InceptionV3_mixed10_avg':
             return app_inception_v3.InceptionV3(weights='imagenet', include_top=False, pooling='avg')
-        elif model_type == 'InceptionV3_mixed10_avg':
+        elif model_type == 'InceptionV3_mixed10_max':
             return app_inception_v3.InceptionV3(weights='imagenet', include_top=False, pooling='max')
         elif model_type == 'InceptionV3_mixed9_avg':
             base_model = app_inception_v3.InceptionV3(weights='imagenet', include_top=False)
