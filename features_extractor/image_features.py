@@ -16,6 +16,7 @@ import keras.applications.inception_v3 as app_inception_v3
 import numpy as np
 
 from sklearn.preprocessing import normalize
+from sklearn.decomposition import PCA
 
 import h5py
 
@@ -546,6 +547,15 @@ class FeatureExtractor:
             model_type = model_type[:-8]
         else:
             self.normalization = 'None'
+
+        # Application of a dimensionality reduction
+        if model_type.endswith('_pca_64'):
+            # In the case of a PCA, the number of images should be greater than the number of components kept
+            self.reduction = 'pca_64'
+            # Erase the norm in the model.
+            model_type = model_type[:-7]
+        else:
+            self.reduction = 'None'
         
         # Create the model
         self.cnn_model = self.extractor.create_model(model_type)
@@ -577,6 +587,10 @@ class FeatureExtractor:
 
         images = self.load_images(path, features.images)
         features.features = self.cnn_model.predict(images)
+
+        if self.reduction == 'pca_64':
+            pca = PCA(n_components=64)
+            features.features = pca.fit_transform(features.features)
 
         if self.normalization in ['l1', 'l2', 'max']:
             features.features = normalize(features.features, norm=self.normalization, axis=1)

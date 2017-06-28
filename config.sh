@@ -21,6 +21,7 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # InceptionV3_mixed10_max
 # InceptionV3_mixed9_avg
 # InceptionV3_mixed9_max
+# InceptionV3_mixed9_max_pca_64
 # InceptionV3_mixed8_avg
 # InceptionV3_mixed8_max
 # InceptionV3_mixed7_avg
@@ -77,8 +78,10 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # ResNet50_avg_pool_max_norm_l2
 # ResNet50_activation_46_avg
 # ResNet50_activation_46_max
+# ResNet50_activation_46_max_pca_64
 # ResNet50_activation_43_avg
 # ResNet50_activation_43_max
+# ResNet50_activation_43_max_pca_64
 # ResNet50_activation_40_avg
 # ResNet50_activation_40_max
 # ResNet50_activation_37_avg
@@ -114,6 +117,8 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # VGG16_block5_pool_avg_norm_l2
 # VGG16_block5_pool_max
 # VGG16_block5_pool_max_norm_l2
+# VGG16_block5_pool_max_pca_64
+# VGG16_block5_pool_max_pca_64_norm_l2
 # VGG16_block4_pool_avg
 # VGG16_block4_pool_avg_norm_l2
 # VGG16_block4_pool_max
@@ -133,6 +138,8 @@ declare -a transformations=("base" "blur" "gray" "resize50" "compress10" "rotate
 # VGG19_block5_pool_avg_norm_l2
 # VGG19_block5_pool_max
 # VGG19_block5_pool_max_norm_l2
+# VGG19_block5_pool_max_pca_64
+# VGG19_block5_pool_max_pca_64_norm_l2
 # VGG19_block4_pool_avg
 # VGG19_block4_pool_avg_norm_l2
 # VGG19_block4_pool_max
