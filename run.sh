@@ -48,7 +48,7 @@ for model in ${cnn_model[@]}; do
             result_png_file="$result_directory/benchmark_${model_distance}_all.png"
 
             trace "Benchmark all: $model_distance"
-            ./CNNFeaturesBenchmark all $result_dat_file --features_directory "../features/$model" --distance $distance --threshold_start ${cnn_model_threshold_start[$model_distance]} --threshold_end ${cnn_model_threshold_end[$model_distance]} --threshold_step ${cnn_model_threshold_step[$model_distance]}
+            ./CNNFeaturesBenchmark features_all $result_dat_file --directory "../features/$model" --distance $distance --threshold_start ${cnn_model_threshold_start[$model_distance]} --threshold_end ${cnn_model_threshold_end[$model_distance]} --threshold_step ${cnn_model_threshold_step[$model_distance]}
             # Plot the results
             gnuplot -e "filename='$result_dat_file';name='$model Features (all) $distance'" "../plot/threshold.pg" > $result_png_file
             # Add the best f1-measure line to the result
@@ -63,7 +63,7 @@ for model in ${cnn_model[@]}; do
                 result_png_file="$result_directory/benchmark_${model_distance}_${t}.png"
 
                 trace "Benchmark single: ${model_distance}_${t}"
-                ./CNNFeaturesBenchmark single $result_dat_file --features_base "../features/$model/features_base.h5" --features_modified "../features/$model/features_$t.h5" --distance $distance --threshold_start ${cnn_model_threshold_start[$model_distance]} --threshold_end ${cnn_model_threshold_end[$model_distance]} --threshold_step ${cnn_model_threshold_step[$model_distance]}
+                ./CNNFeaturesBenchmark features_single $result_dat_file --base "../features/$model/features_base.h5" --modified "../features/$model/features_$t.h5" --distance $distance --threshold_start ${cnn_model_threshold_start[$model_distance]} --threshold_end ${cnn_model_threshold_end[$model_distance]} --threshold_step ${cnn_model_threshold_step[$model_distance]}
                 # Plot the results
                 gnuplot -e "filename='$result_dat_file';name='$model Features ($t) $distance'" "../plot/threshold.pg" > $result_png_file
                 # Add the best f1-measure line to the result

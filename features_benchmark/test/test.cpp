@@ -2,10 +2,9 @@
 
 #include "catch.hpp"
 
-#include <cmath>
-
 #include "../src/CnnFeatures.h"
-#include "../src/FeaturesIndex.h"
+#include "../src/CnnCode.h"
+#include "../src/Index.h"
 #include "../src/Benchmark.h"
 #include "../src/BenchmarkStats.h"
 
@@ -13,7 +12,7 @@ using namespace std;
 
 const double EPSILON = 0.0001;
 
-TEST_CASE("Features are indexed", "[features_index]") {
+TEST_CASE("Features are indexed", "[index]") {
     vector<CnnFeatures> features = {
             {0, 1},
             {0, 2},
@@ -21,7 +20,7 @@ TEST_CASE("Features are indexed", "[features_index]") {
             {0, 4},
     };
 
-    FeaturesIndex index(CnnFeaturesEuclideanDistanceSq, features);
+    Index<CnnFeatures> index(CnnFeaturesEuclideanDistanceSq, features);
 
     SECTION("Search in a radius of 1") {
         vector<pair<float, unsigned long> > results = index.search_radius({0, 5}, 1);
@@ -84,6 +83,57 @@ TEST_CASE("Features are indexed", "[features_index]") {
 
         REQUIRE(results[3].first == 16);
         REQUIRE(results[3].second == 3);
+    }
+}
+
+TEST_CASE("Codes are indexed", "[index]") {
+    CnnCode code1(0b0000);
+    CnnCode code2(0b0001);
+    CnnCode code3(0b1010);
+    CnnCode code_query(0b0100);
+
+    vector<CnnCode> codes = {
+            code1,
+            code2,
+            code3,
+    };
+
+    Index<CnnCode> index(CnnCodeHammingDistance, codes);
+
+    SECTION("Search in a radius of 1") {
+        vector<pair<float, unsigned long> > results = index.search_radius(code_query, 1.0f / MAX_CODE_LENGTH);
+
+        REQUIRE(results.size() == 1);
+
+        REQUIRE(results[0].first == 1.0 / MAX_CODE_LENGTH);
+        REQUIRE(results[0].second == 0);
+    }
+
+    SECTION("Search in a radius of 2") {
+        vector<pair<float, unsigned long> > results = index.search_radius(code_query, 2.0f / MAX_CODE_LENGTH);
+
+        REQUIRE(results.size() == 2);
+
+        REQUIRE(results[0].first == 1.0 / MAX_CODE_LENGTH);
+        REQUIRE(results[0].second == 0);
+
+        REQUIRE(results[1].first == 2.0 / MAX_CODE_LENGTH);
+        REQUIRE(results[1].second == 1);
+    }
+
+    SECTION("Search in a radius of 3") {
+        vector<pair<float, unsigned long> > results = index.search_radius(code_query, 3.0f / MAX_CODE_LENGTH);
+
+        REQUIRE(results.size() == 3);
+
+        REQUIRE(results[0].first == 1.0 / MAX_CODE_LENGTH);
+        REQUIRE(results[0].second == 0);
+
+        REQUIRE(results[1].first == 2.0 / MAX_CODE_LENGTH);
+        REQUIRE(results[1].second == 1);
+
+        REQUIRE(results[2].first == 3.0 / MAX_CODE_LENGTH);
+        REQUIRE(results[2].second == 2);
     }
 }
 
@@ -197,10 +247,10 @@ TEST_CASE("Benchmark with single modification are executed", "[benchmark]") {
             {1, 5},
     };
 
-    FeaturesIndex index(CnnFeaturesEuclideanDistanceSq, features_base);
+    Index<CnnFeatures> index(CnnFeaturesEuclideanDistanceSq, features_base);
 
     SECTION("Threshold: 1 and 2") {
-        vector<BenchmarkStats> stats = Benchmark::single_modification(index, features_modified, {1.0, 2.0});
+        vector<BenchmarkStats> stats = Benchmark<CnnFeatures>::single_modification(index, features_modified, {1.0, 2.0});
 
         REQUIRE(abs(stats[0].mean_precision() - 1.0) < EPSILON);
         REQUIRE(abs(stats[0].mean_recall() - 1.0) < EPSILON);
@@ -234,13 +284,13 @@ TEST_CASE("Benchmark with all modifications are executed", "[benchmark]") {
             {2, 12},
     };
 
-    FeaturesIndex index(CnnFeaturesEuclideanDistanceSq);
+    Index<CnnFeatures> index(CnnFeaturesEuclideanDistanceSq);
     index.add(features_a);
     index.add(features_b);
     index.add(features_c);
 
     SECTION("Threshold: 4") {
-        vector<BenchmarkStats> stats = Benchmark::all_modifications(index, 3, {4.0});
+        vector<BenchmarkStats> stats = Benchmark<CnnFeatures>::all_modifications(index, 3, {4.0});
 
         REQUIRE(abs(stats[0].mean_precision() - 1.0) < EPSILON);
         REQUIRE(abs(stats[0].mean_recall() - 1.0) < EPSILON);
@@ -249,7 +299,7 @@ TEST_CASE("Benchmark with all modifications are executed", "[benchmark]") {
 }
 
 TEST_CASE("Threshold generation", "[generate_threshold]") {
-    vector<float> thresholds = Benchmark::generate_thresholds(10.0, 40.0, 10.0);
+    vector<float> thresholds = Benchmark<CnnFeatures>::generate_thresholds(10.0, 40.0, 10.0);
 
     REQUIRE(thresholds.size() == 4);
 

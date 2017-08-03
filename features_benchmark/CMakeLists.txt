@@ -28,10 +28,10 @@ if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-set(SOURCE_FILES src/main.cpp src/FeaturesHdf5IO.cpp src/FeaturesHdf5IO.h src/CnnFeatures.cpp src/CnnFeatures.h src/FeaturesIndex.cpp src/FeaturesIndex.h src/Benchmark.cpp src/Benchmark.h src/BenchmarkStats.cpp src/BenchmarkStats.h)
+set(SOURCE_FILES src/main.cpp src/FeaturesHdf5IO.cpp src/FeaturesHdf5IO.h src/CnnFeatures.cpp src/CnnFeatures.h src/Benchmark.h src/BenchmarkStats.cpp src/BenchmarkStats.h src/CnnCode.h src/CnnCode.cpp src/Index.h)
 add_executable(CNNFeaturesBenchmark ${SOURCE_FILES})
 target_link_libraries(CNNFeaturesBenchmark ${HDF5_LIBS})
 target_link_libraries(CNNFeaturesBenchmark ${Boost_LIBRARIES})
 
-set(SOURCE_FILES_TEST test/test.cpp test/catch.hpp src/CnnFeatures.cpp src/CnnFeatures.h src/FeaturesIndex.cpp src/FeaturesIndex.h src/Benchmark.cpp src/Benchmark.h src/BenchmarkStats.cpp src/BenchmarkStats.h)
+set(SOURCE_FILES_TEST test/test.cpp test/catch.hpp src/CnnFeatures.cpp src/CnnFeatures.h src/CnnCode.h src/CnnCode.cpp src/Index.h src/Benchmark.h src/BenchmarkStats.cpp src/BenchmarkStats.h)
 add_executable(CNNFeaturesBenchmarkTest ${SOURCE_FILES_TEST})

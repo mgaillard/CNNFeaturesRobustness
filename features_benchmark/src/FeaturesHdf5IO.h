@@ -4,12 +4,15 @@
 #include <string>
 #include <vector>
 #include "CnnFeatures.h"
+#include "CnnCode.h"
 
 using namespace std;
 
 class FeaturesHdf5IO {
 public:
-    static vector<CnnFeatures> load(const string &filename);
+    static vector<CnnFeatures> loadFeatures(const string &filename);
+
+    static vector<CnnCode> loadBinaryCodes(const string &filename);
 };
 
 

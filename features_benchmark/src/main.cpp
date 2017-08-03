@@ -9,7 +9,6 @@
 
 #include "CnnFeatures.h"
 #include "FeaturesHdf5IO.h"
-#include "FeaturesIndex.h"
 #include "Benchmark.h"
 
 using namespace std;
@@ -18,20 +17,35 @@ namespace po = boost::program_options;
 
 vector<string> ListFeatureFiles(const string &dir_path);
 
-void BenchmarkSingleModification(const string &features_base_path,
-                                 const string &features_modified_path,
-                                 const string &distance_type,
-                                 float threshold_start,
-                                 float threshold_end,
-                                 float threshold_step,
-                                 const string &output);
+void BenchmarkSingleModificationFeatures(const string &features_base_path,
+                                         const string &features_modified_path,
+                                         const string &distance_type,
+                                         float threshold_start,
+                                         float threshold_end,
+                                         float threshold_step,
+                                         const string &output);
 
-void BenchmarkAllModifications(const string &features_directory_path,
-                               const string &distance_type,
-                               float threshold_start,
-                               float threshold_end,
-                               float threshold_step,
-                               const string &output);
+void BenchmarkSingleModificationCodes(const string &codes_base_path,
+                                      const string &codes_modified_path,
+                                      const string &distance_type,
+                                      float threshold_start,
+                                      float threshold_end,
+                                      float threshold_step,
+                                      const string &output);
+
+void BenchmarkAllModificationsFeatures(const string &features_directory_path,
+                                       const string &distance_type,
+                                       float threshold_start,
+                                       float threshold_end,
+                                       float threshold_step,
+                                       const string &output);
+
+void BenchmarkAllModificationsCodes(const string &codes_directory_path,
+                                    const string &distance_type,
+                                    float threshold_start,
+                                    float threshold_end,
+                                    float threshold_step,
+                                    const string &output);
 
 int main(int argc, const char *argv[]) {
     try {
@@ -47,16 +61,16 @@ int main(int argc, const char *argv[]) {
         options_desc.add_options()
                 ("help,h", "Display a help message")
                 ("benchmark_type", po::value<string>(&benchmark_type)->required(),
-                     "Set the type of benchmark to execute: 'single' or 'all'")
+                     "Set the type of benchmark to execute: 'features_single' or 'features_all' or 'codes_single' or 'codes_all'")
                 ("output", po::value<string>(&output)->required(), "Set the output of the benchmark")
-                ("features_directory,d", po::value<string>(), "Path to directory of features")
-                ("features_base,b", po::value<string>(), "Path to base features")
-                ("features_modified,m", po::value<string>(), "Path to modified features")
-                ("distance,d", po::value<string>(&distance_type)->default_value(CNN_DIST_EUCLIDEAN),
-                      "Type of distance between features")
-                ("threshold_start", po::value<float>(&threshold_start)->default_value(0.0), "Starting threshold")
-                ("threshold_end", po::value<float>(&threshold_end)->default_value(5000.0), "Ending threshold")
-                ("threshold_step", po::value<float>(&threshold_step)->default_value(50.0), "Threshold step");
+                ("directory,d", po::value<string>(), "Path to directory of features/codes")
+                ("base,b", po::value<string>(), "Path to base features/codes")
+                ("modified,m", po::value<string>(), "Path to modified features/codes")
+                ("distance,d", po::value<string>(&distance_type)->required(),
+                      "Type of distance between features/codes")
+                ("threshold_start", po::value<float>(&threshold_start)->default_value(0.0f), "Starting threshold")
+                ("threshold_end", po::value<float>(&threshold_end)->default_value(1.0f), "Ending threshold")
+                ("threshold_step", po::value<float>(&threshold_step)->default_value(0.02f), "Threshold step");
 
         po::positional_options_description pos_options_desc;
         pos_options_desc.add("benchmark_type", 1);
@@ -76,37 +90,70 @@ int main(int argc, const char *argv[]) {
         po::notify(vm);
 
         if (vm.count("benchmark_type") && vm.count("output")) {
-            if (benchmark_type.compare("single") == 0) {
-                if (vm.count("features_base") && vm.count("features_modified")) {
-                    string features_base_path = vm["features_base"].as<string>();
-                    string features_modified_path = vm["features_modified"].as<string>();
+            if (benchmark_type.compare("features_single") == 0) {
+                if (vm.count("base") && vm.count("modified")) {
+                    string features_base_path = vm["base"].as<string>();
+                    string features_modified_path = vm["modified"].as<string>();
 
-                    BenchmarkSingleModification(features_base_path,
-                                                features_modified_path,
-                                                distance_type,
-                                                threshold_start,
-                                                threshold_end,
-                                                threshold_step,
-                                                output);
+                    BenchmarkSingleModificationFeatures(features_base_path,
+                                                        features_modified_path,
+                                                        distance_type,
+                                                        threshold_start,
+                                                        threshold_end,
+                                                        threshold_step,
+                                                        output);
                 } else {
                     cerr
-                            << "Error: the --features_base and --features_modified options are required for the benchmark 'single'."
+                            << "Error: the --base and --modified options are required for the benchmark 'features_single'."
                             << endl;
                 }
 
-            } else if (benchmark_type.compare("all") == 0) {
-                if (vm.count("features_directory")) {
-                    string features_directory_path = vm["features_directory"].as<string>();
+            } else if (benchmark_type.compare("codes_single") == 0) {
+                if (vm.count("base") && vm.count("modified")) {
+                    string codes_base_path = vm["base"].as<string>();
+                    string codes_modified_path = vm["modified"].as<string>();
 
-                    BenchmarkAllModifications(features_directory_path,
-                                              distance_type,
-                                              threshold_start,
-                                              threshold_end,
-                                              threshold_step,
-                                              output);
+                    BenchmarkSingleModificationCodes(codes_base_path,
+                                                     codes_modified_path,
+                                                     distance_type,
+                                                     threshold_start,
+                                                     threshold_end,
+                                                     threshold_step,
+                                                     output);
                 } else {
                     cerr
-                            << "Error: the --features_base option is required for the benchmark 'all'."
+                            << "Error: the --base and --modified options are required for the benchmark 'codes_single'."
+                            << endl;
+                }
+
+            } else if (benchmark_type.compare("features_all") == 0) {
+                if (vm.count("directory")) {
+                    string features_directory_path = vm["directory"].as<string>();
+
+                    BenchmarkAllModificationsFeatures(features_directory_path,
+                                                      distance_type,
+                                                      threshold_start,
+                                                      threshold_end,
+                                                      threshold_step,
+                                                      output);
+                } else {
+                    cerr
+                            << "Error: the --directory option is required for the benchmark 'features_all'."
+                            << endl;
+                }
+            } else if (benchmark_type.compare("codes_all") == 0) {
+                if (vm.count("directory")) {
+                    string codes_directory_path = vm["directory"].as<string>();
+
+                    BenchmarkAllModificationsCodes(codes_directory_path,
+                                                   distance_type,
+                                                   threshold_start,
+                                                   threshold_end,
+                                                   threshold_step,
+                                                   output);
+                } else {
+                    cerr
+                            << "Error: the --directory option is required for the benchmark 'codes_all'."
                             << endl;
                 }
             }
@@ -153,55 +200,92 @@ vector<string> ListFeatureFiles(const string &dir_path) {
     return files;
 }
 
-void BenchmarkSingleModification(const string &features_base_path,
-                                 const string &features_modified_path,
-                                 const string &distance_type,
-                                 float threshold_start,
-                                 float threshold_end,
-                                 float threshold_step,
-                                 const string &output) {
-    vector<CnnFeatures> features_base = FeaturesHdf5IO::load(features_base_path);
-    vector<CnnFeatures> features_modified = FeaturesHdf5IO::load(features_modified_path);
-    
-    cout << "Information about base features" << endl;
-    Benchmark::display_features_information(features_base);
-    cout << "Information about modified features" << endl;
-    Benchmark::display_features_information(features_modified);
+void BenchmarkSingleModificationFeatures(const string &features_base_path,
+                                         const string &features_modified_path,
+                                         const string &distance_type,
+                                         float threshold_start,
+                                         float threshold_end,
+                                         float threshold_step,
+                                         const string &output) {
+    vector<CnnFeatures> features_base = FeaturesHdf5IO::loadFeatures(features_base_path);
+    vector<CnnFeatures> features_modified = FeaturesHdf5IO::loadFeatures(features_modified_path);
 
     CnnFeaturesDistanceFunction distance_function = MakeCnnFeaturesDistanceFunction(distance_type);
-    FeaturesIndex index(distance_function);
+    Index<CnnFeatures> index(distance_function);
     index.add(features_base);
 
-    vector<float> thresholds = Benchmark::generate_thresholds(threshold_start, threshold_end, threshold_step);
+    vector<float> thresholds = Benchmark<CnnFeatures>::generate_thresholds(threshold_start, threshold_end, threshold_step);
 
-    vector<BenchmarkStats> stats = Benchmark::single_modification(index, features_modified, thresholds);
+    vector<BenchmarkStats> stats = Benchmark<CnnFeatures>::single_modification(index, features_modified, thresholds);
 
-    Benchmark::save_stats(stats, output);
+    Benchmark<CnnFeatures>::save_stats(stats, output);
 }
 
-void BenchmarkAllModifications(const string &features_directory_path,
-                               const string &distance_type,
-                               float threshold_start,
-                               float threshold_end,
-                               float threshold_step,
-                               const string &output) {
+void BenchmarkSingleModificationCodes(const string &codes_base_path,
+                                      const string &codes_modified_path,
+                                      const string &distance_type,
+                                      float threshold_start,
+                                      float threshold_end,
+                                      float threshold_step,
+                                      const string &output) {
+    vector<CnnCode> codes_base = FeaturesHdf5IO::loadBinaryCodes(codes_base_path);
+    vector<CnnCode> codes_modified = FeaturesHdf5IO::loadBinaryCodes(codes_modified_path);
+
+    CnnCodeDistanceFunction distance_function = MakeCnnCodesDistanceFunction(distance_type);
+    Index<CnnCode> index(distance_function);
+    index.add(codes_base);
+
+    vector<float> thresholds = Benchmark<CnnCode>::generate_thresholds(threshold_start, threshold_end, threshold_step);
+
+    vector<BenchmarkStats> stats = Benchmark<CnnCode>::single_modification(index, codes_modified, thresholds);
+
+    Benchmark<CnnCode>::save_stats(stats, output);
+}
+
+void BenchmarkAllModificationsFeatures(const string &features_directory_path,
+                                       const string &distance_type,
+                                       float threshold_start,
+                                       float threshold_end,
+                                       float threshold_step,
+                                       const string &output) {
     vector<string> feature_files = ListFeatureFiles(features_directory_path);
     unsigned long nb_relevant = feature_files.size();
 
     // Load all features
     CnnFeaturesDistanceFunction distance_function = MakeCnnFeaturesDistanceFunction(distance_type);
-    FeaturesIndex index(distance_function);
+    Index<CnnFeatures> index(distance_function);
     for (const string &file : feature_files) {
-        vector<CnnFeatures> features = FeaturesHdf5IO::load(file);
+        vector<CnnFeatures> features = FeaturesHdf5IO::loadFeatures(file);
         index.add(features);
-        
-        cout << "Information about features in file: " << file << endl;
-		Benchmark::display_features_information(features);
     }
 
-    vector<float> thresholds = Benchmark::generate_thresholds(threshold_start, threshold_end, threshold_step);
+    vector<float> thresholds = Benchmark<CnnFeatures>::generate_thresholds(threshold_start, threshold_end, threshold_step);
 
-    vector<BenchmarkStats> stats = Benchmark::all_modifications(index, nb_relevant, thresholds);
+    vector<BenchmarkStats> stats = Benchmark<CnnFeatures>::all_modifications(index, nb_relevant, thresholds);
 
-    Benchmark::save_stats(stats, output);
+    Benchmark<CnnFeatures>::save_stats(stats, output);
+}
+
+void BenchmarkAllModificationsCodes(const string &codes_directory_path,
+                                    const string &distance_type,
+                                    float threshold_start,
+                                    float threshold_end,
+                                    float threshold_step,
+                                    const string &output) {
+    vector<string> codes_files = ListFeatureFiles(codes_directory_path);
+    unsigned long nb_relevant = codes_files.size();
+
+    // Load all codes
+    CnnCodeDistanceFunction distance_function = MakeCnnCodesDistanceFunction(distance_type);
+    Index<CnnCode> index(distance_function);
+    for (const string &file : codes_files) {
+        vector<CnnCode> codes = FeaturesHdf5IO::loadBinaryCodes(file);
+        index.add(codes);
+    }
+
+    vector<float> thresholds = Benchmark<CnnCode>::generate_thresholds(threshold_start, threshold_end, threshold_step);
+
+    vector<BenchmarkStats> stats = Benchmark<CnnCode>::all_modifications(index, nb_relevant, thresholds);
+
+    Benchmark<CnnCode>::save_stats(stats, output);
 }
