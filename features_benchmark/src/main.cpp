@@ -197,6 +197,8 @@ vector<string> ListFeatureFiles(const string &dir_path) {
         cout << "Error reading directory." << endl;
     }
 
+    sort(files.begin(), files.end());
+
     return files;
 }
 
